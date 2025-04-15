@@ -22,6 +22,13 @@ Available PoC guest programs:
 - `guest-total-supply`: get the total supply of an asset
 - `guest-sum-balance-percent`: sum the balances of multiple accounts and calculate the percentage of the total supply
 
+### RuntimeAPI PoC
+
+1. Use chopsticks to start a local chain with the RuntimeAPI enabled: `make run`
+2. Build guest programs: `make guests`
+3. Run test runner to display hex-encoded `args` in tracing logs: `cargo run -p pvq-test-runner -- --program output/<guest-program>`
+4. Upload `program` and `args` in PJS UI.
+
 ### XCM Integration PoC
 
 The test case of XCM integration is located in `vendor/polkadot-sdk/polkadot/xcm/xcm-simulator/example/src/tests.rs`

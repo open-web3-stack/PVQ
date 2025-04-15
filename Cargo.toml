@@ -46,6 +46,7 @@ polkavm-derive = { path = "vendor/polkavm/crates/polkavm-derive", default-featur
 
 # polkadot-sdk
 sp-api = { path = "vendor/polkadot-sdk/substrate/primitives/api", default-features = false }
+sp-core = { path = "vendor/polkadot-sdk/substrate/primitives/core", default-features = false }
 frame = { package = "polkadot-sdk-frame", path = "vendor/polkadot-sdk/substrate/frame", default-features = false }
 pallet-balances = { path = "vendor/polkadot-sdk/substrate/frame/balances", default-features = false }
 pallet-assets = { path = "vendor/polkadot-sdk/substrate/frame/assets", default-features = false }
@@ -69,6 +70,7 @@ scale-info = { version = "2.11.3", default-features = false, features = [
     "derive",
 ] }
 tracing = { version = "0.1.40", default-features = false }
+hex = { version = "0.4" }
 
 # std
 clap = { version = "4.5.4", features = ["derive"] }

@@ -1,5 +1,6 @@
 use parity_scale_codec::Encode;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
+use sp_core::crypto::{AccountId32, Ss58Codec};
 
 #[derive(Encode)]
 #[allow(non_camel_case_types)]
@@ -53,21 +54,28 @@ impl TestRunner {
         let mut input_data = Vec::new();
 
         if program_path.contains("sum-balance") {
-            input_data.extend_from_slice(&0u32.encode());
-            input_data.extend_from_slice(&vec![[0u8; 32], [1u8; 32]].encode());
+            input_data.extend_from_slice(&21u32.encode());
+
+            let alice_account: [u8; 32] =
+                AccountId32::from_ss58check("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+                    .expect("Failed to decode Alice's address")
+                    .into();
+            input_data.extend_from_slice(&vec![alice_account].encode());
         } else if program_path.contains("total-supply") {
-            input_data.extend_from_slice(&0u32.encode());
+            input_data.extend_from_slice(&21u32.encode());
         } else if program_path.contains("transparent-call") {
             input_data.extend_from_slice(&4071833530116166512u64.encode());
+            let alice_account = AccountId32::from_ss58check("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+                .expect("Failed to decode Alice's address");
             input_data.extend_from_slice(
                 &ExtensionFungiblesFunctions::balance {
-                    asset: 0,
-                    who: [1u8; 32],
+                    asset: 21u32,
+                    who: alice_account.into(),
                 }
                 .encode(),
             );
         }
-
+        tracing::info!("Input data (hex): {}", hex::encode(&input_data));
         input_data
     }
 
