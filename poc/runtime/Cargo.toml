@@ -54,4 +54,5 @@ std = [
     "pvq-primitives/std",
     "pvq-extension-core/std",
     "pvq-extension-fungibles/std",
+    "pvq-runtime-api/std",
 ]
