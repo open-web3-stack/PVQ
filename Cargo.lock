@@ -3102,7 +3102,6 @@ name = "pvq-test-runner"
 version = "0.1.0"
 dependencies = [
  "clap",
- "hex",
  "parity-scale-codec",
  "polkavm",
  "pvq-executor",

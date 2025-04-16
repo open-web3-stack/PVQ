@@ -22,5 +22,3 @@ pvq-extension-fungibles = { workspace = true, features = ["std"] }
 pvq-primitives = { workspace = true, features = ["std"] }
 
 polkavm = { workspace = true, features = ["std"] }
-
-hex = { workspace = true, features = ["std"] }
