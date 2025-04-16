@@ -1,6 +1,7 @@
 use parity_scale_codec::Encode;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
 use sp_core::crypto::{AccountId32, Ss58Codec};
+use sp_core::hexdisplay::HexDisplay;
 
 #[derive(Encode)]
 #[allow(non_camel_case_types)]
@@ -75,7 +76,7 @@ impl TestRunner {
                 .encode(),
             );
         }
-        tracing::info!("Input data (hex): {}", hex::encode(&input_data));
+        tracing::info!("Input data (hex): {}", HexDisplay::from(&input_data));
         input_data
     }
 
