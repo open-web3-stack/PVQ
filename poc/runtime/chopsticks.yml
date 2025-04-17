@@ -1,5 +1,5 @@
 mock-signature-host: true
-runtime-log-level: 5
+runtime-log-level: 4
 import-storage:
   Sudo:
     Key: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY # Alice
