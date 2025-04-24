@@ -15,3 +15,4 @@ parity-scale-codec = { version = "3", default-features = false, features = [
 ] }
 pvq-program = { path = "../pvq-program", default-features = false }
 polkavm-derive = { path = "../vendor/polkavm/crates/polkavm-derive" }
+cfg-if = "1.0"
