@@ -38,6 +38,9 @@ jobs:
       - name: Check no-std
         run: make check-wasm
 
+      - name: Install pvq-program-metadata-gen
+        run: cargo install --path pvq-program-metadata-gen
+
       - name: Clippy
         run: make clippy
 
