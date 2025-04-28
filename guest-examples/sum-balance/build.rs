@@ -4,6 +4,7 @@ use std::process::Command;
 
 fn main() {
     // Tell Cargo to rerun this build script if the source file changes
+    println!("cargo:rerun-if-changed=src/main.rs");
     let current_dir = env::current_dir().expect("Failed to get current directory");
     // Determine the output directory for the metadata
     let output_dir = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR is not set"));

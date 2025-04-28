@@ -2790,6 +2790,7 @@ dependencies = [
  "pvq-extension-procedural",
  "pvq-primitives",
  "scale-info",
+ "serde",
  "tracing",
  "tracing-subscriber",
 ]
@@ -2892,6 +2893,8 @@ dependencies = [
  "pvq-extension-fungibles",
  "pvq-primitives",
  "scale-info",
+ "serde",
+ "serde_json",
  "sp-core",
  "tracing",
  "tracing-subscriber",

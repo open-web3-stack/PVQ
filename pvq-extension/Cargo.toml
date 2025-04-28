@@ -16,6 +16,7 @@ pvq-extension-procedural = { path = "procedural" }
 parity-scale-codec = { workspace = true }
 scale-info = { workspace = true }
 pvq-primitives = { workspace = true }
+serde = { workspace = true }
 
 [dev-dependencies]
 tracing-subscriber = { workspace = true }
@@ -29,4 +30,5 @@ std = [
     "parity-scale-codec/std",
     "scale-info/std",
     "tracing/std",
+    "serde/std",
 ]

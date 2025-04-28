@@ -34,5 +34,9 @@ fn main() {
     let mut runner = TestRunner::new();
     let res = runner.execute_program(&blob, &input_data).unwrap();
 
+    let metadata = pvq_test_runner::extensions::metadata();
+    let metadata_json = serde_json::to_string(&metadata).expect("Failed to serialize metadata");
+    tracing::info!("Metadata: {}", metadata_json);
+
     tracing::info!("Result: {:?}", res);
 }
