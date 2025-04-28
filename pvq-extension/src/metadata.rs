@@ -5,7 +5,7 @@ pub trait ExtensionImplMetadata {
     fn extension_metadata(extension_id: ExtensionIdTy) -> ExtensionMetadata;
 }
 
-use parity_scale_codec::{Decode, Encode};
+use parity_scale_codec::Encode;
 use scale_info::{
     form::{Form, MetaForm, PortableForm},
     prelude::collections::BTreeMap,
@@ -14,7 +14,7 @@ use scale_info::{
 };
 use serde::Serialize;
 /// Metadata of extensions
-#[derive(Clone, PartialEq, Eq, Encode, Decode, Debug, Serialize)]
+#[derive(Clone, PartialEq, Eq, Encode, Debug, Serialize)]
 pub struct Metadata {
     pub types: PortableRegistry,
     pub extensions: BTreeMap<ExtensionIdTy, ExtensionMetadata<PortableForm>>,
@@ -35,7 +35,7 @@ impl Metadata {
 }
 
 /// Metadata of an extension.
-#[derive(Clone, PartialEq, Eq, Encode, Decode, Debug)]
+#[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct ExtensionMetadata<T: Form = MetaForm> {
     pub name: T::String,
     pub functions: Vec<FunctionMetadata<T>>,
@@ -66,7 +66,7 @@ impl Serialize for ExtensionMetadata<PortableForm> {
 }
 
 /// Metadata of a runtime function.
-#[derive(Clone, PartialEq, Eq, Encode, Decode, Debug)]
+#[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct FunctionMetadata<T: Form = MetaForm> {
     /// Method name.
     pub name: T::String,
@@ -103,7 +103,7 @@ impl Serialize for FunctionMetadata<PortableForm> {
 }
 
 /// Metadata of a runtime method parameter.
-#[derive(Clone, PartialEq, Eq, Encode, Decode, Debug)]
+#[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct FunctionParamMetadata<T: Form = MetaForm> {
     /// Parameter name.
     pub name: T::String,
