@@ -5,7 +5,7 @@ pub fn get_active_features(optional_features: Option<&toml::Table>) -> Result<Ve
         .map(|(var, _)| var)
         .collect::<HashSet<_>>();
     if features_env.is_empty() {
-        return Ok(vec![]);
+        Ok(vec![])
     } else {
         let features = optional_features
             .as_ref()

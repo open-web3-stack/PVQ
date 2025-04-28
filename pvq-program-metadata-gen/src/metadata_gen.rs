@@ -13,16 +13,7 @@ pub fn metadata_gen_src(source: &str, output_dir: &str) -> syn::Result<proc_macr
     let program_mod_idx = syntax
         .items
         .iter()
-        .position(|item| match item {
-            syn::Item::Mod(m)
-                if m.attrs
-                    .iter()
-                    .any(|attr| attr.path().segments.last().is_some_and(|last| last.ident == "program")) =>
-            {
-                true
-            }
-            _ => false,
-        })
+        .position(|item| matches!(item, syn::Item::Mod(m) if m.attrs.iter().any(|attr|attr.path().segments.last().is_some_and(|last|last.ident == "program"))))
         .ok_or(syn::Error::new(
             proc_macro2::Span::call_site(),
             "No program module found",

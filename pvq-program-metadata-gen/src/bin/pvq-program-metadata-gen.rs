@@ -33,7 +33,7 @@ fn main() {
     info!("Temp crate path: {}", temp_crate_path.display());
 
     // Read the program source
-    let source = fs::read_to_string(&args.crate_path.join("src/main.rs"))
+    let source = fs::read_to_string(args.crate_path.join("src/main.rs"))
         .expect("Failed to read pvq program source file, expected `src/main.rs`");
 
     // Generate the metadata generator source codes
@@ -49,7 +49,7 @@ fn main() {
 
     // Extract features section from the original manifest
     let original_manifest_content =
-        std::fs::read_to_string(&args.crate_path.join("Cargo.toml")).expect("Failed to read original Cargo.toml");
+        std::fs::read_to_string(args.crate_path.join("Cargo.toml")).expect("Failed to read original Cargo.toml");
     let optional_features = pvq_program_metadata_gen::extract_features(&original_manifest_content)
         .expect("Failed to extract features section from the original Cargo.toml");
     debug!("Features section: {:?}", optional_features);
