@@ -23,6 +23,9 @@ tools: polkatool chain-spec-builder
 polkatool:
 	cargo install --path vendor/polkavm/tools/polkatool
 
+pvq-program-metadata-gen:
+	cargo install --path pvq-program-metadata-gen
+
 chain-spec-builder:
 	cargo install --path vendor/polkadot-sdk/substrate/bin/utils/chain-spec-builder
 
@@ -37,7 +40,7 @@ check: check-wasm
 	SKIP_WASM_BUILD= cargo check
 	cd pvq-program/examples; cargo check
 
-clippy:
+clippy: pvq-program-metadata-gen
 	SKIP_WASM_BUILD= cargo clippy -- -D warnings
 	cd guest-examples; cargo clippy --all
 
