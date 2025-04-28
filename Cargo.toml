@@ -11,6 +11,7 @@ members = [
     "poc/runtime",
 
     "pvq-program",
+    "pvq-program-metadata-gen",
     "pvq-executor",
     "pvq-extension-core",
     "pvq-extension-fungibles",
@@ -32,6 +33,7 @@ opt-level = 3
 [workspace.dependencies]
 # local
 pvq-program = { path = "pvq-program", default-features = false }
+pvq-program-metadata-gen = { path = "pvq-program-metadata-gen" }
 pvq-executor = { path = "pvq-executor", default-features = false }
 pvq-extension-core = { path = "pvq-extension-core", default-features = false }
 pvq-extension-fungibles = { path = "pvq-extension-fungibles", default-features = false }
@@ -75,6 +77,8 @@ tracing = { version = "0.1.40", default-features = false }
 clap = { version = "4.5.4", features = ["derive"] }
 env_logger = { version = "0.11.3" }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tempfile = { version = "3.9.0" }
+toml = { version = "0.8", features = ["preserve_order"] }
 
 fortuples = "0.9"
 
