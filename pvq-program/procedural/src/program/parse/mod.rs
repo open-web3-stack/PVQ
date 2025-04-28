@@ -30,8 +30,7 @@ impl Def {
         let mut extension_fns = Vec::new();
         let mut entrypoint = None;
 
-        let mut i = 0;
-        while i < items.len() {
+        for i in (0..items.len()).rev() {
             let item = &mut items[i];
             if let Some(attr) = helper::take_first_program_attr(item)? {
                 if let Some(last_segment) = attr.path().segments.last() {
@@ -72,7 +71,6 @@ impl Def {
                     }
                 }
             }
-            i += 1;
         }
 
         let entrypoint =
