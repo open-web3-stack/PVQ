@@ -15,11 +15,13 @@ pub struct Def {
     pub impl_struct: impl_struct::ImplStruct,
     pub extension_impls: Vec<extension::ExtensionImpl>,
     pub pvq_extension: syn::Path,
+    pub scale_info: syn::Path,
 }
 
 impl Def {
     pub fn try_from(mut item: syn::ItemMod) -> syn::Result<Self> {
         let pvq_extension = generate_crate_access("pvq-extension")?;
+        let scale_info = generate_crate_access("scale-info")?;
         let item_span = item.span();
         let items = &mut item
             .content
@@ -58,6 +60,7 @@ impl Def {
                 .ok_or_else(|| syn::Error::new(item_span, "Missing `#[extensions_impl::impl_struct]`"))?,
             extension_impls,
             pvq_extension,
+            scale_info,
         })
     }
 }

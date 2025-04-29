@@ -2790,6 +2790,7 @@ dependencies = [
  "pvq-extension-procedural",
  "pvq-primitives",
  "scale-info",
+ "serde",
  "tracing",
  "tracing-subscriber",
 ]
@@ -2843,7 +2844,22 @@ dependencies = [
  "polkavm-derive 0.21.0",
  "pvq-program-procedural",
  "scale-info",
- "trybuild",
+]
+
+[[package]]
+name = "pvq-program-metadata-gen"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "parity-scale-codec",
+ "proc-macro2",
+ "quote",
+ "scale-info",
+ "syn 2.0.100",
+ "tempfile",
+ "toml",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -2877,6 +2893,8 @@ dependencies = [
  "pvq-extension-fungibles",
  "pvq-primitives",
  "scale-info",
+ "serde",
+ "serde_json",
  "sp-core",
  "tracing",
  "tracing-subscriber",
@@ -4179,6 +4197,7 @@ version = "0.8.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd87a5cdd6ffab733b2f74bc4fd7ee5fff6634124999ac278c35fc78c6120148"
 dependencies = [
+ "indexmap",
  "serde",
  "serde_spanned",
  "toml_datetime",

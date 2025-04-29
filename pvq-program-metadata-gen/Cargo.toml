@@ -1,0 +1,20 @@
+[package]
+name = "pvq-program-metadata-gen"
+description = "PVQ program metadata generation"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+quote = { workspace = true }
+syn = { workspace = true }
+proc-macro2 = { workspace = true }
+clap = { workspace = true }
+parity-scale-codec = { workspace = true }
+scale-info = { workspace = true }
+toml = { workspace = true }
+tempfile = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

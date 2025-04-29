@@ -9,12 +9,9 @@ version.workspace = true
 
 [dependencies]
 pvq-program-procedural = { path = "procedural" }
-
-[dev-dependencies]
 parity-scale-codec = { workspace = true }
 scale-info = { workspace = true }
 polkavm-derive = { workspace = true }
-trybuild = { workspace = true }
 
 [features]
 default = ["std"]

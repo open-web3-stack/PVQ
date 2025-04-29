@@ -8,20 +8,25 @@ pub trait ExtensionImplMetadata {
 use parity_scale_codec::Encode;
 use scale_info::{
     form::{Form, MetaForm, PortableForm},
+    prelude::collections::BTreeMap,
     prelude::vec::Vec,
     IntoPortable, PortableRegistry, Registry,
 };
+use serde::Serialize;
 /// Metadata of extensions
-#[derive(Clone, PartialEq, Eq, Encode, Debug)]
+#[derive(Clone, PartialEq, Eq, Encode, Debug, Serialize)]
 pub struct Metadata {
     pub types: PortableRegistry,
-    pub extensions: Vec<ExtensionMetadata<PortableForm>>,
+    pub extensions: BTreeMap<ExtensionIdTy, ExtensionMetadata<PortableForm>>,
 }
 
 impl Metadata {
-    pub fn new(extensions: Vec<ExtensionMetadata>) -> Self {
+    pub fn new(extensions: BTreeMap<ExtensionIdTy, ExtensionMetadata>) -> Self {
         let mut registry = Registry::new();
-        let extensions = registry.map_into_portable(extensions);
+        let extensions = extensions
+            .into_iter()
+            .map(|(id, metadata)| (id, metadata.into_portable(&mut registry)))
+            .collect();
         Self {
             types: registry.into(),
             extensions,
@@ -44,6 +49,19 @@ impl IntoPortable for ExtensionMetadata {
             name: self.name.into_portable(registry),
             functions: registry.map_into_portable(self.functions),
         }
+    }
+}
+
+impl Serialize for ExtensionMetadata<PortableForm> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut state = serializer.serialize_struct("ExtensionMetadata", 2)?;
+        state.serialize_field("name", &self.name)?;
+        state.serialize_field("functions", &self.functions)?;
+        state.end()
     }
 }
 
@@ -70,6 +88,20 @@ impl IntoPortable for FunctionMetadata {
     }
 }
 
+impl Serialize for FunctionMetadata<PortableForm> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut state = serializer.serialize_struct("FunctionMetadata", 3)?;
+        state.serialize_field("name", &self.name)?;
+        state.serialize_field("inputs", &self.inputs)?;
+        state.serialize_field("output", &self.output)?;
+        state.end()
+    }
+}
+
 /// Metadata of a runtime method parameter.
 #[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct FunctionParamMetadata<T: Form = MetaForm> {
@@ -87,5 +119,18 @@ impl IntoPortable for FunctionParamMetadata {
             name: self.name.into_portable(registry),
             ty: registry.register_type(&self.ty),
         }
+    }
+}
+
+impl Serialize for FunctionParamMetadata<PortableForm> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut state = serializer.serialize_struct("FunctionParamMetadata", 2)?;
+        state.serialize_field("name", &self.name)?;
+        state.serialize_field("ty", &self.ty)?;
+        state.end()
     }
 }

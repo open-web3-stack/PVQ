@@ -38,6 +38,9 @@ jobs:
       - name: Check no-std
         run: make check-wasm
 
+      - name: Install pvq-program-metadata-gen
+        run: cargo install --path pvq-program-metadata-gen
+
       - name: Clippy
         run: make clippy
 
@@ -64,6 +67,9 @@ jobs:
 
       - name: Install polkatool
         run: make polkatool
+
+      - name: Install pvq-program-metadata-gen
+        run: cargo install --path pvq-program-metadata-gen
 
       - name: Build guests
         run: make guests

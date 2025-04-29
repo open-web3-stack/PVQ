@@ -5,6 +5,8 @@ use quote::quote;
 /// generate the `metadata` function in the #[extensions_impl] module
 pub fn expand_metadata(def: &Def) -> TokenStream2 {
     let pvq_extension = &def.pvq_extension;
+    let scale_info = &def.scale_info;
+    let mut extension_id_call_list = Vec::new();
     let mut extension_metadata_call_list = Vec::new();
 
     for impl_ in &def.extension_impls {
@@ -14,30 +16,22 @@ pub fn expand_metadata(def: &Def) -> TokenStream2 {
         // Replace trait_path with a call to the metadata function with the impl struct as generic parameter
         let impl_struct_ident = &def.impl_struct.ident;
 
+        let extension_id_call = quote!(
+            #trait_path extension_id()
+        );
         // Create a method call expression instead of a path
         let method_call = quote!(
             #trait_path metadata::<#impl_struct_ident>()
         );
 
+        extension_id_call_list.push(extension_id_call);
         extension_metadata_call_list.push(method_call);
     }
-
-    // let query_metadata_by_extension_id = quote! {
-    //     impl #pvq_extension::ExtensionImplMetadata for #extension_impl_name {
-    //         fn extension_metadata(extension_id: #pvq_extension::ExtensionIdTy) -> #pvq_extension::metadata::ExtensionMetadata {
-    //             let extension_metadata = match extension_id {
-    //                 #(#extension_ids => #extension_metadata_list,)*
-    //                 _ => panic!("Unknown extension id"),
-    //             };
-    //             extension_metadata
-    //         }
-    //     }
-    // };
 
     let metadata = quote! {
         pub fn metadata() -> #pvq_extension::metadata::Metadata {
             #pvq_extension::metadata::Metadata::new(
-                scale_info::prelude::vec![ #( #extension_metadata_call_list, )* ],
+                #scale_info::prelude::collections::BTreeMap::from([ #( (#extension_id_call_list, #extension_metadata_call_list), )* ]),
             )
         }
     };
