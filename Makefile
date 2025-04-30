@@ -40,9 +40,9 @@ check: check-wasm
 	SKIP_WASM_BUILD= cargo check
 	cd pvq-program/examples; cargo check
 
-clippy: pvq-program-metadata-gen
+clippy:
 	SKIP_WASM_BUILD= cargo clippy -- -D warnings
-	cd guest-examples; cargo clippy --all
+	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo clippy --all
 
 test:
 	SKIP_WASM_BUILD= cargo test
