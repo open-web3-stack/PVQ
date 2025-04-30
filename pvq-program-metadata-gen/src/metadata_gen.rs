@@ -4,7 +4,7 @@ use syn::spanned::Spanned;
 type ExtensionId = u64;
 type FnIndex = u8;
 
-pub fn metadata_gen_src(source: &str, output_dir: &str) -> syn::Result<proc_macro2::TokenStream> {
+pub fn metadata_gen_src(source: &str, pkg_name: &str, output_dir: &str) -> syn::Result<proc_macro2::TokenStream> {
     // Parse the source code
     let mut syntax = syn::parse_file(source)?;
 
@@ -102,8 +102,8 @@ pub fn metadata_gen_src(source: &str, output_dir: &str) -> syn::Result<proc_macr
             let encoded = parity_scale_codec::Encode::encode(&metadata);
             let json = serde_json::to_string(&metadata).expect("Failed to serialize metadata to JSON");
 
-            let bin_path = Path::new(#output_dir).join("metadata.bin");
-            let json_path = Path::new(#output_dir).join("metadata.json");
+            let bin_path = Path::new(#output_dir).join(format!("{}-metadata.bin", #pkg_name));
+            let json_path = Path::new(#output_dir).join(format!("{}-metadata.json", #pkg_name));
 
             // Write the binary format
             std::fs::write(bin_path, &encoded).expect("Failed to write binary metadata");
