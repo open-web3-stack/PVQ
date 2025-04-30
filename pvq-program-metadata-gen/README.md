@@ -21,7 +21,7 @@ pvq-program-metadata-gen --crate-path /path/to/your/crate --output-dir /path/to/
 ### Arguments
 
 - `--crate-path, -c`: Path to the crate directory containing a PVQ program
-- `--output-dir, -o`: Output directory for the metadata file, typically `OUT_DIR` specified in your `build.rs` file
+- `--output-dir, -o`: Output directory for the metadata file, typically `METADATA_OUTPUT_DIR` environment variable read by `build.rs`
 
 ## Integration with Build Scripts
 
@@ -36,7 +36,7 @@ fn main() {
     // Tell Cargo to rerun this build script if the source file changes
     let current_dir = env::current_dir().expect("Failed to get current directory");
     // Determine the output directory for the metadata
-    let output_dir = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR is not set"));
+    let output_dir = PathBuf::from(env::var("METADATA_OUTPUT_DIR").expect("METADATA_OUTPUT_DIR is not set"));
 
     // Build and run the command
     let status = Command::new("pvq-program-metadata-gen")
