@@ -35,7 +35,6 @@ pub fn expand_metadata(def: &Def) -> TokenStream2 {
                 let mut ty = ty.clone();
                 // Replace Self::AssociatedType with Impl::AssociatedType
                 replacer.visit_type_mut(&mut ty);
-                eprintln!("ty: {}", quote!(#ty));
                 quote!(#scale_info::meta_type::<#ty>())
             }
         };
