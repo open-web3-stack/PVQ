@@ -33,6 +33,7 @@ pub fn expand_metadata(def: &Def) -> TokenStream2 {
             syn::ReturnType::Default => quote!(#scale_info::meta_type::<()>()),
             syn::ReturnType::Type(_, ty) => {
                 let mut ty = ty.clone();
+                // Replace Self::AssociatedType with Impl::AssociatedType
                 replacer.visit_type_mut(&mut ty);
                 quote!(#scale_info::meta_type::<#ty>())
             }
@@ -73,12 +74,12 @@ pub fn expand_metadata(def: &Def) -> TokenStream2 {
     }
 }
 
-// Convert `Self::AssociatedType` to `Impl::AssociatedType`
+// Replace `Self` with `Impl` in the type path
 struct AssociatedTypeReplacer;
 impl syn::visit_mut::VisitMut for AssociatedTypeReplacer {
-    fn visit_path_mut(&mut self, path: &mut syn::Path) {
-        if path.segments.len() == 2 && path.segments[0].ident == "Self" {
-            path.segments[0].ident = syn::Ident::new("Impl", path.segments[0].ident.span());
+    fn visit_ident_mut(&mut self, ident: &mut syn::Ident) {
+        if ident == "Self" {
+            *ident = syn::Ident::new("Impl", ident.span());
         }
     }
 }
