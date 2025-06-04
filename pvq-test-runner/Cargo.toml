@@ -21,6 +21,7 @@ pvq-executor = { workspace = true, features = ["std"] }
 pvq-extension = { workspace = true, features = ["std"] }
 pvq-extension-core = { workspace = true, features = ["std"] }
 pvq-extension-fungibles = { workspace = true, features = ["std"] }
+pvq-extension-swap = { workspace = true, features = ["std"] }
 pvq-primitives = { workspace = true, features = ["std"] }
 
 polkavm = { workspace = true, features = ["std"] }

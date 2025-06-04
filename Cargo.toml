@@ -15,6 +15,7 @@ members = [
     "pvq-executor",
     "pvq-extension-core",
     "pvq-extension-fungibles",
+    "pvq-extension-swap",
     "pvq-extension",
     "pvq-primitives",
     "pvq-runtime-api",
@@ -37,6 +38,7 @@ pvq-program-metadata-gen = { path = "pvq-program-metadata-gen" }
 pvq-executor = { path = "pvq-executor", default-features = false }
 pvq-extension-core = { path = "pvq-extension-core", default-features = false }
 pvq-extension-fungibles = { path = "pvq-extension-fungibles", default-features = false }
+pvq-extension-swap = { path = "pvq-extension-swap", default-features = false }
 pvq-extension = { path = "pvq-extension", default-features = false }
 pvq-primitives = { path = "pvq-primitives", default-features = false }
 pvq-runtime-api = { path = "pvq-runtime-api", default-features = false }

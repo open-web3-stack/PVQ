@@ -78,7 +78,6 @@ impl<Ctx: PvqExecutorContext> PvqExecutor<Ctx> {
 
             let result = instance.read_memory(res_ptr, res_size)?;
 
-            tracing::info!("Result: {:?}", result);
             Ok(result)
         })();
 

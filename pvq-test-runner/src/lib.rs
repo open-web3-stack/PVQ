@@ -15,6 +15,7 @@ pub enum ExtensionFungiblesFunctions {
 
 #[extensions_impl]
 pub mod extensions {
+    use parity_scale_codec::Decode;
     #[extensions_impl::impl_struct]
     pub struct ExtensionsImpl;
 
@@ -36,6 +37,38 @@ pub mod extensions {
         }
         fn balance(_asset: Self::AssetId, _who: Self::AccountId) -> Self::Balance {
             100
+        }
+    }
+    #[extensions_impl::extension]
+    impl pvq_extension_swap::extension::ExtensionSwap for ExtensionsImpl {
+        type AssetId = Vec<u8>;
+        type Balance = u64;
+        fn quote_price_tokens_for_exact_tokens(
+            _asset1: Self::AssetId,
+            _asset2: Self::AssetId,
+            _amount: Self::Balance,
+            _include_fee: bool,
+        ) -> Option<Self::Balance> {
+            None
+        }
+
+        fn quote_price_exact_tokens_for_tokens(
+            _asset1: Self::AssetId,
+            _asset2: Self::AssetId,
+            _amount: Self::Balance,
+            _include_fee: bool,
+        ) -> Option<Self::Balance> {
+            None
+        }
+
+        fn get_liquidity_pool(asset1: Self::AssetId, asset2: Self::AssetId) -> Option<(Self::Balance, Self::Balance)> {
+            let _asset1 = u32::decode(&mut &asset1[..]).expect("Failed to decode asset1");
+            let _asset2 = u32::decode(&mut &asset2[..]).expect("Failed to decode asset2");
+            Some((100, 100))
+        }
+
+        fn list_pools() -> Vec<(Self::AssetId, Self::AssetId, Self::Balance, Self::Balance)> {
+            vec![]
         }
     }
 }
@@ -75,6 +108,11 @@ impl TestRunner {
                 }
                 .encode(),
             );
+        } else if program_path.contains("liquidity-pool") {
+            let asset1 = u32::encode(&21);
+            let asset2 = u32::encode(&22);
+            input_data.extend_from_slice(&asset1.encode());
+            input_data.extend_from_slice(&asset2.encode());
         }
         tracing::info!("Input data (hex): {}", HexDisplay::from(&input_data));
         input_data
