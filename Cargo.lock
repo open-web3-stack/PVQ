@@ -2829,6 +2829,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "pvq-extension-swap"
+version = "0.1.0"
+dependencies = [
+ "parity-scale-codec",
+ "pvq-extension",
+ "scale-info",
+]
+
+[[package]]
 name = "pvq-primitives"
 version = "0.1.0"
 dependencies = [
@@ -2891,6 +2900,7 @@ dependencies = [
  "pvq-extension",
  "pvq-extension-core",
  "pvq-extension-fungibles",
+ "pvq-extension-swap",
  "pvq-primitives",
  "scale-info",
  "serde",

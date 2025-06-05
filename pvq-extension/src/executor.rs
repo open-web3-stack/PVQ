@@ -38,6 +38,7 @@ impl<C: CallDataTuple, P: PermissionController> ExtensionsExecutor<C, P> {
     /// The result of the execution or an error
     pub fn execute(&mut self, program: &[u8], args: &[u8], gas_limit: Option<i64>) -> (PvqResult, Option<i64>) {
         let (result, gas_remaining) = self.executor.execute(program, args, gas_limit);
+        tracing::info!("result: {:?}", result);
         (result.map_err(PvqError::from), gas_remaining)
     }
 }

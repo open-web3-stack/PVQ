@@ -17,8 +17,23 @@ pub trait CallDataTuple {
     fn dispatch(extension_id: ExtensionIdTy, data: &[u8]) -> Result<Vec<u8>, ExtensionError>;
 }
 
-// Use the macro to implement ExtensionTuple for tuples of different lengths
+impl<Member0> CallDataTuple for Member0
+where
+    Member0: CallData,
+{
+    fn dispatch(extension_id: ExtensionIdTy, mut data: &[u8]) -> Result<Vec<u8>, ExtensionError> {
+        if extension_id == Member0::EXTENSION_ID {
+            return Member0::decode(&mut data)
+                .map_err(ExtensionError::DecodeError)?
+                .dispatch()
+                .map_err(ExtensionError::DispatchError);
+        }
+        Err(ExtensionError::UnsupportedExtension)
+    }
+}
+
 fortuples! {
+    #[tuples::min_size(1)]
     impl CallDataTuple for #Tuple where #(#Member: CallData),*{
         #[allow(unused_variables)]
         #[allow(unused_mut)]
