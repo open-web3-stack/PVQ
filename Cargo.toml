@@ -49,21 +49,21 @@ polkavm = { path = "vendor/polkavm/crates/polkavm", default-features = false }
 polkavm-derive = { path = "vendor/polkavm/crates/polkavm-derive", default-features = false }
 
 # polkadot-sdk
-sp-api = { version = "36.0.1", default-features = false }
-sp-core = { version = "36.1.0", default-features = false }
-frame = { version = "0.9.1", package = "polkadot-sdk-frame", default-features = false }
-pallet-balances = { version = "41.1.0", default-features = false }
-pallet-assets = { version = "42.0.0", default-features = false }
-pallet-sudo = { version = "40.0.0", default-features = false }
-pallet-timestamp = { version = "39.0.0", default-features = false }
-pallet-transaction-payment = { version = "40.0.0", default-features = false }
-pallet-transaction-payment-rpc-runtime-api = { version = "40.0.0", default-features = false }
+sp-api = { version = "34.0.0", default-features = false }
+sp-core = { version = "34.0.0", default-features = false }
+frame = { version = "0.7.0", package = "polkadot-sdk-frame", default-features = false }
+pallet-balances = { version = "39.0.0", default-features = false }
+pallet-assets = { version = "40.0.0", default-features = false }
+pallet-sudo = { version = "38.0.0", default-features = false }
+pallet-timestamp = { version = "37.0.0", default-features = false }
+pallet-transaction-payment = { version = "38.0.0", default-features = false }
+pallet-transaction-payment-rpc-runtime-api = { version = "38.0.0", default-features = false }
 
 # genesis builder that allows us to interacto with runtime genesis config
-sp-genesis-builder = { version = "0.17.0", default-features = false }
+sp-genesis-builder = { version = "0.15.1", default-features = false }
 
 # wasm builder
-substrate-wasm-builder = { version = "26.0.0" }
+substrate-wasm-builder = { version = "24.0.1" }
 
 # nostd
 parity-scale-codec = { version = "3.6.12", default-features = false, features = [
