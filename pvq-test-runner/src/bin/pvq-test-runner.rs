@@ -27,14 +27,14 @@ struct Cli {
 #[derive(clap::ValueEnum, Clone, Debug)]
 enum Chain {
     Poc,
-    Ah,
+    Acala,
 }
 
 impl std::fmt::Display for Chain {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Chain::Poc => write!(f, "poc"),
-            Chain::Ah => write!(f, "ah"),
+            Chain::Acala => write!(f, "acala"),
         }
     }
 }
@@ -54,7 +54,7 @@ fn main() {
     let cli = Cli::parse();
 
     let program_str = cli.program.to_string_lossy();
-    let input_data = TestRunner::prepare_input_data(&program_str, &cli.chain.to_string());
+    let input_data = TestRunner::prepare_input_data(&program_str, &cli.chain.to_string(), cli.entrypoint_idx);
     let expected_result = TestRunner::expected_result(&program_str, &cli.chain.to_string(), cli.entrypoint_idx);
 
     if cli.print_data {

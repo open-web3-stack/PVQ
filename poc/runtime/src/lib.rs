@@ -21,18 +21,19 @@ use frame::{
         apis::{self, impl_runtime_apis},
         prelude::*,
     },
+    traits::AsEnsureOriginWithArg,
 };
 
 #[runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-    spec_name: alloc::borrow::Cow::Borrowed("pvq-poc"),
-    impl_name: alloc::borrow::Cow::Borrowed("pvq-poc"),
+    spec_name: create_runtime_str!("pvq-poc"),
+    impl_name: create_runtime_str!("pvq-poc"),
     authoring_version: 1,
     spec_version: 0,
     impl_version: 1,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 1,
-    system_version: 1,
+    state_version: 1,
 };
 
 /// The version information used to identify this runtime when compiled natively.

@@ -1,9 +1,10 @@
-use parity_scale_codec::Encode;
+use acala_primitives::currency::TokenInfo;
+use acala_primitives::{CurrencyId, TokenSymbol};
+use parity_scale_codec::{Decode, Encode};
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
+use scale_info::TypeInfo;
 use sp_core::crypto::{AccountId32, Ss58Codec};
 use sp_core::hexdisplay::HexDisplay;
-use xcm::v5::Junction::{GeneralIndex, PalletInstance};
-use xcm::v5::Location;
 
 #[derive(Encode)]
 #[allow(non_camel_case_types)]
@@ -13,6 +14,14 @@ pub enum ExtensionFungiblesFunctions {
     total_supply { asset: u32 },
     #[codec(index = 1)]
     balance { asset: u32, who: [u8; 32] },
+}
+
+#[derive(Encode, Decode, Debug, TypeInfo)]
+struct AssetInfo {
+    asset_id: Vec<u8>,
+    name: Vec<u8>,
+    symbol: Vec<u8>,
+    decimals: u8,
 }
 
 #[extensions_impl]
@@ -91,7 +100,7 @@ impl TestRunner {
         }
     }
 
-    pub fn prepare_input_data(program_path: &str, chain: &str) -> Vec<u8> {
+    pub fn prepare_input_data(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
         let mut input_data = Vec::new();
 
         if program_path.contains("sum-balance") {
@@ -109,14 +118,17 @@ impl TestRunner {
                 input_data.extend_from_slice(&[0u8]);
                 input_data.extend_from_slice(&21u32.encode());
             }
-        } else if program_path.contains("swap-info") {
-            #[allow(clippy::collapsible_if)]
-            if chain == "ah" {
+        } else if program_path.contains("swap-info") && chain == "acala" {
+            if entrypoint_idx == 2 {
                 input_data.extend_from_slice(&[2u8]);
-                let asset1 = Location::parent().encode();
-                let asset2 = Location::new(0, (PalletInstance(50), GeneralIndex(2511))).encode();
+                let asset1 = CurrencyId::Token(TokenSymbol::ACA).encode();
+                let asset2 = CurrencyId::Token(TokenSymbol::DOT).encode();
                 input_data.extend_from_slice(&asset1.encode());
                 input_data.extend_from_slice(&asset2.encode());
+            } else if entrypoint_idx == 4 {
+                input_data.extend_from_slice(&[4u8]);
+                let asset1 = CurrencyId::Token(TokenSymbol::ACA).encode();
+                input_data.extend_from_slice(&asset1.encode());
             }
         }
         tracing::info!("Input data (hex): {}", HexDisplay::from(&input_data));
@@ -126,8 +138,19 @@ impl TestRunner {
 
     pub fn expected_result(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
         // TODO: add more entrypoints
-        if program_path.contains("swap-info") && chain == "ah" && entrypoint_idx == 2 {
-            return (10_235_709_412_325u128, 12_117_819_770_919u128).encode();
+        if program_path.contains("swap-info") && chain == "acala" {
+            if entrypoint_idx == 2 {
+                return (100_680_000_000_000_000u128, 9_932_526_409_188u128).encode();
+            } else if entrypoint_idx == 4 {
+                let currency_id = CurrencyId::Token(TokenSymbol::ACA);
+                let asset_info = AssetInfo {
+                    asset_id: currency_id.encode(),
+                    name: currency_id.name().expect("Failed to get name").encode(),
+                    symbol: currency_id.symbol().expect("Failed to get symbol").encode(),
+                    decimals: currency_id.decimals().expect("Failed to get decimals"),
+                };
+                return asset_info.encode();
+            }
         }
 
         // Default empty result
