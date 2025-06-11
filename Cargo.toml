@@ -63,7 +63,7 @@ pallet-transaction-payment-rpc-runtime-api = { version = "40.0.0", default-featu
 sp-genesis-builder = { version = "0.17.0", default-features = false }
 
 # wasm builder
-substrate-wasm-builder = { version = "26.0.0" }
+substrate-wasm-builder = { version = "26.0.1" }
 
 # nostd
 parity-scale-codec = { version = "3.6.12", default-features = false, features = [
