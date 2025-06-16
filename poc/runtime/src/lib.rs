@@ -1,4 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
+// Frame macros reference features which this crate does not have
+#![allow(unexpected_cfgs)]
 
 // Make the WASM binary available.
 #[cfg(feature = "std")]
