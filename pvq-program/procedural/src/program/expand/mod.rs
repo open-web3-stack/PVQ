@@ -79,42 +79,45 @@ fn expand_extension_fn(extension_fn: &mut ExtensionFn, parity_scale_codec: &syn:
 fn expand_main(def: &Def) -> TokenStream2 {
     let parity_scale_codec = &def.parity_scale_codec;
 
-    // Get `ident: Type`s
-    let arg_pats = def.entrypoint.item_fn.sig.inputs.iter().collect::<Vec<_>>();
-    // Get `ident`s
-    let arg_identifiers = arg_pats
-        .iter()
-        .map(|arg| {
-            if let syn::FnArg::Typed(pat_type) = arg {
-                pat_type.pat.to_token_stream()
-            } else {
-                unreachable!("Checked in parse stage")
+    // Generate match arms for each entrypoint
+    let match_arms = def.entrypoints.iter().enumerate().map(|(index, entrypoint)| {
+        let entrypoint_ident = &entrypoint.item_fn.sig.ident;
+        let arg_pats = entrypoint.item_fn.sig.inputs.iter().collect::<Vec<_>>();
+        let arg_identifiers = arg_pats
+            .iter()
+            .map(|arg| {
+                if let syn::FnArg::Typed(pat_type) = arg {
+                    pat_type.pat.to_token_stream()
+                } else {
+                    unreachable!("Checked in parse stage")
+                }
+            })
+            .collect::<Vec<_>>();
+
+        quote! {
+            #index => {
+                #(let #arg_pats = #parity_scale_codec::Decode::decode(&mut arg_bytes)
+                    .expect(concat!("Failed to decode arguments for ", stringify!(#entrypoint_ident)));)*
+                let res = #entrypoint_ident(#(#arg_identifiers),*);
+                let encoded_res = #parity_scale_codec::Encode::encode(&res);
+                (encoded_res.len() as u64) << 32 | (encoded_res.as_ptr() as u64)
             }
-        })
-        .collect::<Vec<_>>();
-    let arg_identifiers_str = arg_identifiers.iter().map(|arg| arg.to_string()).collect::<Vec<_>>();
-
-    let decode_args = quote! {
-        #(let #arg_pats = #parity_scale_codec::Decode::decode(&mut arg_bytes).expect(concat!("Failed to decode ", #arg_identifiers_str));)*
-    };
-
-    let entrypoint_ident = &def.entrypoint.item_fn.sig.ident;
-    let call_entrypoint = quote! {
-        let res = #entrypoint_ident(#(#arg_identifiers),*);
-    };
+        }
+    });
 
     quote! {
         #[polkavm_derive::polkavm_export]
         extern "C" fn pvq(arg_ptr: u32, size: u32) -> u64 {
-        let mut arg_bytes = unsafe { core::slice::from_raw_parts(arg_ptr as *const u8, size as usize) };
+            // First stage: read fn_index
+            let fn_index = unsafe { *(arg_ptr as *const u8) } as usize;
 
-        #decode_args
+            // Second stage: read arg_bytes
+            let mut arg_bytes = unsafe { core::slice::from_raw_parts((arg_ptr + 1) as *const u8, (size - 1) as usize) };
 
-        #call_entrypoint
-
-        let encoded_res = #parity_scale_codec::Encode::encode(&res);
-        (encoded_res.len() as u64) << 32 | (encoded_res.as_ptr() as u64)
-
+            match fn_index {
+                #(#match_arms,)*
+                _ => panic!("Invalid function index"),
+            }
         }
     }
 }

@@ -94,6 +94,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "guest-swap-info"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "parity-scale-codec",
+ "polkavm-derive",
+ "pvq-program",
+]
+
+[[package]]
 name = "guest-test-swap-extension"
 version = "0.1.0"
 dependencies = [
