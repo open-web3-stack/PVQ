@@ -42,7 +42,7 @@ pub mod extensions {
     #[extensions_impl::extension]
     impl pvq_extension_swap::extension::ExtensionSwap for ExtensionsImpl {
         type AssetId = Vec<u8>;
-        type Balance = u64;
+        type Balance = u128;
         fn quote_price_tokens_for_exact_tokens(
             _asset1: Self::AssetId,
             _asset2: Self::AssetId,
@@ -88,14 +88,15 @@ impl TestRunner {
         let mut input_data = Vec::new();
 
         if program_path.contains("sum-balance") {
+            input_data.extend_from_slice(&[0u8]);
             input_data.extend_from_slice(&21u32.encode());
-
             let alice_account: [u8; 32] =
                 AccountId32::from_ss58check("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
                     .expect("Failed to decode Alice's address")
                     .into();
             input_data.extend_from_slice(&vec![alice_account].encode());
         } else if program_path.contains("total-supply") {
+            input_data.extend_from_slice(&[0u8]);
             input_data.extend_from_slice(&21u32.encode());
         } else if program_path.contains("transparent-call") {
             input_data.extend_from_slice(&4071833530116166512u64.encode());
@@ -109,6 +110,12 @@ impl TestRunner {
                 .encode(),
             );
         } else if program_path.contains("liquidity-pool") {
+            let asset1 = u32::encode(&21);
+            let asset2 = u32::encode(&22);
+            input_data.extend_from_slice(&asset1.encode());
+            input_data.extend_from_slice(&asset2.encode());
+        } else if program_path.contains("swap-info") {
+            input_data.extend_from_slice(&[0u8]);
             let asset1 = u32::encode(&21);
             let asset2 = u32::encode(&22);
             input_data.extend_from_slice(&asset1.encode());

@@ -10,7 +10,7 @@ guests: $(GUEST_TARGETS)
 dummy-guests: $(DUMMY_GUEST_TARGETS)
 
 guest-%:
-	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo build -q --release --bin guest-$* -p guest-$*
+	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo build --release --bin guest-$* -p guest-$*
 	mkdir -p output
 	polkatool link --run-only-if-newer -s guest-examples/target/riscv32emac-unknown-none-polkavm/release/guest-$* -o output/guest-$*.polkavm
 

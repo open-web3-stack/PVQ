@@ -14,8 +14,8 @@ tracing-subscriber = { workspace = true }
 parity-scale-codec = { workspace = true, features = ["std"] }
 scale-info = { workspace = true, features = ["std", "serde"] }
 sp-core = { workspace = true, features = ["std"] }
-serde = { workspace = true }
-serde_json = { workspace = true }
+serde = { workspace = true, features = ["std"] }
+serde_json = { workspace = true, features = ["std"] }
 
 pvq-executor = { workspace = true, features = ["std"] }
 pvq-extension = { workspace = true, features = ["std"] }

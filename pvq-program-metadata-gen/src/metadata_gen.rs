@@ -30,12 +30,12 @@ pub fn metadata_gen_src(source: &str, pkg_name: &str, output_dir: &str) -> syn::
     let program_mod_items = &mut program_mod.content.as_mut().expect("This is checked before").1;
 
     // Find entrypoint and extension functions
-    let mut entrypoint_metadata = None;
+    let mut entrypoints_metadata = Vec::new();
     let mut extension_fns_metadata = Vec::new();
+    let mut remaining_items = Vec::new();
 
-    for i in (0..program_mod_items.len()).rev() {
-        let item = &mut program_mod_items[i];
-        if let Some(attr) = crate::helper::take_first_program_attr(item)? {
+    for mut item in program_mod_items.drain(..) {
+        if let Some(attr) = crate::helper::take_first_program_attr(&mut item)? {
             if let Some(last_segment) = attr.path().segments.last() {
                 if last_segment.ident == "extension_fn" {
                     let mut extension_id = None;
@@ -55,7 +55,6 @@ pub fn metadata_gen_src(source: &str, pkg_name: &str, output_dir: &str) -> syn::
                         }
                         Ok(())
                     })?;
-                    let removed_item = program_mod_items.remove(i);
                     if extension_id.is_none() || fn_index.is_none() {
                         return Err(syn::Error::new(
                             attr.span(),
@@ -66,14 +65,11 @@ pub fn metadata_gen_src(source: &str, pkg_name: &str, output_dir: &str) -> syn::
                         extension_id.ok_or_else(|| syn::Error::new(attr.span(), "Extension ID is required"))?;
                     let fn_index =
                         fn_index.ok_or_else(|| syn::Error::new(attr.span(), "Function index is required"))?;
-                    let extension_fn_metadata = generate_extension_fn_metadata(removed_item, extension_id, fn_index)?;
+                    let extension_fn_metadata = generate_extension_fn_metadata(item, extension_id, fn_index)?;
                     extension_fns_metadata.push(extension_fn_metadata);
                 } else if last_segment.ident == "entrypoint" {
-                    if entrypoint_metadata.is_some() {
-                        return Err(syn::Error::new(attr.span(), "Multiple entrypoint functions found"));
-                    }
-                    let removed_item = program_mod_items.remove(i);
-                    entrypoint_metadata = Some(generate_entrypoint_metadata(removed_item)?);
+                    let entrypoint_metadata = generate_entrypoint_metadata(item)?;
+                    entrypoints_metadata.push(entrypoint_metadata);
                 } else {
                     return Err(syn::Error::new(
                         attr.span(),
@@ -81,23 +77,29 @@ pub fn metadata_gen_src(source: &str, pkg_name: &str, output_dir: &str) -> syn::
                     ));
                 }
             }
+        } else {
+            remaining_items.push(item)
         }
     }
 
-    let entrypoint_metadata = entrypoint_metadata
-        .ok_or_else(|| syn::Error::new(proc_macro2::Span::call_site(), "No entrypoint function found"))?;
+    if entrypoints_metadata.is_empty() {
+        return Err(syn::Error::new(
+            proc_macro2::Span::call_site(),
+            "No entrypoint function found",
+        ));
+    }
 
     let metadata_defs = metadata_defs();
     let import_packages = import_packages();
 
     let new_items = quote! {
-        #(#program_mod_items)*
+        #(#remaining_items)*
         #import_packages
         #metadata_defs
         fn main() {
             let extension_fns = vec![ #( #extension_fns_metadata, )* ];
-            let entrypoint = #entrypoint_metadata;
-            let metadata = Metadata::new(extension_fns, entrypoint);
+            let entrypoints = vec![ #( #entrypoints_metadata, )* ];
+            let metadata = Metadata::new(extension_fns, entrypoints);
             // Serialize to both formats
             let encoded = parity_scale_codec::Encode::encode(&metadata);
             let json = serde_json::to_string(&metadata).expect("Failed to serialize metadata to JSON");
@@ -231,21 +233,24 @@ fn metadata_defs() -> proc_macro2::TokenStream {
         pub struct Metadata {
             pub types: PortableRegistry,
             pub extension_fns: Vec<(ExtensionId, FnIndex, FunctionMetadata<PortableForm>)>,
-            pub entrypoint: FunctionMetadata<PortableForm>,
+            pub entrypoints: Vec<FunctionMetadata<PortableForm>>,
         }
 
         impl Metadata {
-            pub fn new(extension_fns: Vec<(ExtensionId, FnIndex, FunctionMetadata)>, entrypoint: FunctionMetadata) -> Self {
+            pub fn new(extension_fns: Vec<(ExtensionId, FnIndex, FunctionMetadata)>, entrypoints: Vec<FunctionMetadata>) -> Self {
                 let mut registry = Registry::new();
                 let extension_fns = extension_fns
                     .into_iter()
                     .map(|(id, index, metadata)| (id, index, metadata.into_portable(&mut registry)))
                     .collect();
-                let entrypoint = entrypoint.into_portable(&mut registry);
+                let entrypoints = entrypoints
+                    .into_iter()
+                    .map(|metadata| metadata.into_portable(&mut registry))
+                    .collect();
                 Self {
                     types: registry.into(),
                     extension_fns,
-                    entrypoint,
+                    entrypoints,
                 }
             }
         }

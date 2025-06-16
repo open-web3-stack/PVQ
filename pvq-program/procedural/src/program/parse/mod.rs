@@ -8,7 +8,7 @@ mod helper;
 pub struct Def {
     pub item: syn::ItemMod,
     pub extension_fns: Vec<ExtensionFn>,
-    pub entrypoint: EntrypointDef,
+    pub entrypoints: Vec<EntrypointDef>,
     pub parity_scale_codec: syn::Path,
     pub polkavm_derive: syn::Path,
 }
@@ -28,11 +28,11 @@ impl Def {
             .1;
 
         let mut extension_fns = Vec::new();
-        let mut entrypoint = None;
+        let mut entrypoints = Vec::new();
+        let mut remaining_items = Vec::new();
 
-        for i in (0..items.len()).rev() {
-            let item = &mut items[i];
-            if let Some(attr) = helper::take_first_program_attr(item)? {
+        for mut item in items.drain(..) {
+            if let Some(attr) = helper::take_first_program_attr(&mut item)? {
                 if let Some(last_segment) = attr.path().segments.last() {
                     if last_segment.ident == "extension_fn" {
                         let mut extension_id = None;
@@ -53,15 +53,13 @@ impl Def {
                             Ok(())
                         })?;
 
-                        let removed_item = items.remove(i);
-                        let extension_fn = ExtensionFn::try_from(attr.span(), removed_item, extension_id, fn_index)?;
+                        let extension_fn = ExtensionFn::try_from(attr.span(), item, extension_id, fn_index)?;
                         extension_fns.push(extension_fn);
                         continue;
                     } else if last_segment.ident == "entrypoint" {
-                        if entrypoint.is_some() {
-                            return Err(syn::Error::new(attr.span(), "Only one entrypoint function is allowed"));
-                        }
-                        entrypoint = Some(EntrypointDef::try_from(attr.span(), item)?);
+                        let entrypoint = EntrypointDef::try_from(attr.span(), &mut item)?;
+                        entrypoints.push(entrypoint);
+                        remaining_items.push(item);
                         continue;
                     } else {
                         return Err(syn::Error::new(
@@ -71,14 +69,23 @@ impl Def {
                     }
                 }
             }
+            remaining_items.push(item);
         }
 
-        let entrypoint =
-            entrypoint.ok_or_else(|| syn::Error::new(mod_span, "At least one entrypoint function is required"))?;
+        if entrypoints.is_empty() {
+            return Err(syn::Error::new(
+                mod_span,
+                "At least one entrypoint function is required",
+            ));
+        }
+
+        // Put remaining items back
+        items.extend(remaining_items);
+
         let def = Def {
             item,
             extension_fns,
-            entrypoint,
+            entrypoints,
             parity_scale_codec,
             polkavm_derive,
         };
