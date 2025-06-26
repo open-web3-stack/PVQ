@@ -14,6 +14,8 @@ polkavm = { workspace = true }
 
 pvq-primitives = { workspace = true }
 
+thiserror = { workspace = true }
+
 [features]
 default = ["std"]
-std = ["tracing/std", "polkavm/std", "pvq-primitives/std"]
+std = ["tracing/std", "polkavm/std", "pvq-primitives/std", "thiserror/std"]
