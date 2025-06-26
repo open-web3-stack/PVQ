@@ -1,47 +1,35 @@
 // TODO: contain source error
 use crate::DispatchError;
 use parity_scale_codec::Error as CodecError;
-use scale_info::prelude::fmt;
-use scale_info::prelude::fmt::{Display, Formatter};
 
 /// Errors that can occur when working with extensions
 // Typically will be used as a UserError
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum ExtensionError {
     /// Permission denied for the requested operation
+    #[error("Permission denied")]
     PermissionError,
 
     /// Failed to allocate memory
+    #[error("Failed to allocate memory")]
     MemoryAllocationError,
 
     /// Error accessing memory
+    #[error("Memory access error: {0}")]
     MemoryAccessError(polkavm::MemoryAccessError),
 
     /// Error decoding data
+    #[error("Decode error: {0}")]
     DecodeError(CodecError),
 
     /// Error dispatching a call
-    DispatchError(DispatchError),
+    #[error("Dispatch error: {0:?}")]
+    DispatchError(#[from] DispatchError),
 
     /// The requested extension is not supported
+    #[error("Unsupported extension")]
     UnsupportedExtension,
 }
-
-impl Display for ExtensionError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::PermissionError => write!(f, "Permission denied"),
-            Self::MemoryAllocationError => write!(f, "Failed to allocate memory"),
-            Self::MemoryAccessError(e) => write!(f, "Memory access error: {:?}", e),
-            Self::DecodeError(e) => write!(f, "Decode error: {:?}", e),
-            Self::DispatchError(e) => write!(f, "Dispatch error: {:?}", e),
-            Self::UnsupportedExtension => write!(f, "Unsupported extension"),
-        }
-    }
-}
-
-#[cfg(feature = "std")]
-impl std::error::Error for ExtensionError {}
 
 impl From<polkavm::MemoryAccessError> for ExtensionError {
     fn from(e: polkavm::MemoryAccessError) -> Self {
@@ -52,11 +40,5 @@ impl From<polkavm::MemoryAccessError> for ExtensionError {
 impl From<CodecError> for ExtensionError {
     fn from(e: CodecError) -> Self {
         Self::DecodeError(e)
-    }
-}
-
-impl From<DispatchError> for ExtensionError {
-    fn from(e: DispatchError) -> Self {
-        Self::DispatchError(e)
     }
 }

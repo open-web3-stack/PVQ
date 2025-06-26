@@ -15,8 +15,9 @@ pub trait Dispatchable {
 }
 
 /// Error type for dispatch operations
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum DispatchError {
+    #[error("PhantomData")]
     PhantomData,
 }
 
