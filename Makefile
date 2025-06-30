@@ -1,3 +1,5 @@
+.PHONY: run guests dummy-guests tools polkatool pvq-program-metadata-gen chain-spec-builder fmt check-wasm check clippy test chainspec
+
 run: chainspec
 	bunx @acala-network/chopsticks@1.0.6 --config poc/runtime/chopsticks.yml --genesis output/chainspec.json
 
