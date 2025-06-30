@@ -1,5 +1,5 @@
 run: chainspec
-	bunx @acala-network/chopsticks@latest --config poc/runtime/chopsticks.yml --genesis output/chainspec.json
+	bunx @acala-network/chopsticks@1.0.6 --config poc/runtime/chopsticks.yml --genesis output/chainspec.json
 
 GUEST_EXAMPLES = $(shell find guest-examples -name "Cargo.toml" -not -path "guest-examples/Cargo.toml" | xargs -n1 dirname | xargs -n1 basename)
 GUEST_TARGETS = $(patsubst %,guest-%,$(GUEST_EXAMPLES))
