@@ -1,4 +1,5 @@
 use crate::ExtensionIdTy;
+use scale_info::prelude::string::{String, ToString};
 
 // This trait is for ExtensionImpl
 pub trait ExtensionImplMetadata {
@@ -17,7 +18,8 @@ use serde::Serialize;
 #[derive(Clone, PartialEq, Eq, Encode, Debug, Serialize)]
 pub struct Metadata {
     pub types: PortableRegistry,
-    pub extensions: BTreeMap<ExtensionIdTy, ExtensionMetadata<PortableForm>>,
+    // Use String to prevent loss of precision in frontend codes
+    pub extensions: BTreeMap<String, ExtensionMetadata<PortableForm>>,
 }
 
 impl Metadata {
@@ -25,7 +27,7 @@ impl Metadata {
         let mut registry = Registry::new();
         let extensions = extensions
             .into_iter()
-            .map(|(id, metadata)| (id, metadata.into_portable(&mut registry)))
+            .map(|(id, metadata)| (id.to_string(), metadata.into_portable(&mut registry)))
             .collect();
         Self {
             types: registry.into(),

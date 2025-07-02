@@ -217,7 +217,7 @@ fn import_packages() -> proc_macro2::TokenStream {
         use parity_scale_codec::Encode;
         use scale_info::{
             form::{Form, MetaForm, PortableForm},
-            prelude::vec::Vec,
+            prelude::{string::{String, ToString}, vec::Vec},
             IntoPortable, PortableRegistry, Registry,
         };
     }
@@ -230,8 +230,9 @@ fn metadata_defs() -> proc_macro2::TokenStream {
         #[derive(Clone, PartialEq, Eq, Encode, Debug, Serialize)]
         pub struct Metadata {
             pub types: PortableRegistry,
-            pub extension_fns: Vec<(ExtensionId, FnIndex, FunctionMetadata<PortableForm>)>,
-            pub entrypoint: FunctionMetadata<PortableForm>,
+            // Use String to prevent loss of precision in frontend codes
+            pub extension_fns: Vec<(String, FnIndex, FunctionMetadata<PortableForm>)>,
+            pub entrypoints: Vec<FunctionMetadata<PortableForm>>,
         }
 
         impl Metadata {
@@ -239,7 +240,7 @@ fn metadata_defs() -> proc_macro2::TokenStream {
                 let mut registry = Registry::new();
                 let extension_fns = extension_fns
                     .into_iter()
-                    .map(|(id, index, metadata)| (id, index, metadata.into_portable(&mut registry)))
+                    .map(|(id, index, metadata)| (id.to_string(), index, metadata.into_portable(&mut registry)))
                     .collect();
                 let entrypoint = entrypoint.into_portable(&mut registry);
                 Self {
