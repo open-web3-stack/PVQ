@@ -6,7 +6,7 @@ PolkaVM Query for Polkadot
 
 ### Prerequisites
 
-- Pull vendored `polkavm` and patched (for XCM integration PoC) `polkadot-sdk`: `git submodule update --init --recursive`.
+- Pull vendored `polkavm`: `git submodule update --init --recursive`.
 - Install `polkatool` (for relinking the standard RV32E ELF to a PolkaVM blob) and `chain-spec-builder` (for building chainspec from a wasm): `make tools`
 
 ### Run Examples
@@ -28,14 +28,3 @@ Available PoC guest programs:
 2. Build guest programs: `make guests`
 3. Run test runner to display hex-encoded `args` in tracing logs: `cargo run -p pvq-test-runner -- --program output/<guest-program>`
 4. Upload `program` and `args` in PJS UI.
-
-### XCM Integration PoC
-
-The test case of XCM integration is located in `vendor/polkadot-sdk/polkadot/xcm/xcm-simulator/example/src/tests.rs`
-
-```rust
-#[test]
-fn test_report_query() {
-    ...
-}
-```
