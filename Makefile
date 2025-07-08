@@ -1,5 +1,4 @@
-.PHONY: run guests dummy-guests tools polkatool pvq-program-metadata-gen chain-spec-builder fmt check-wasm check clippy test chainspec
-
+.PHONY: run
 run: chainspec
 	bunx @acala-network/chopsticks@1.0.6 --config poc/runtime/chopsticks.yml --genesis output/chainspec.json
 
@@ -7,8 +6,10 @@ GUEST_EXAMPLES = $(shell find guest-examples -name "Cargo.toml" -not -path "gues
 GUEST_TARGETS = $(patsubst %,guest-%,$(GUEST_EXAMPLES))
 DUMMY_GUEST_TARGETS = $(patsubst %,dummy-guest-%,$(GUEST_EXAMPLES))
 
+.PHONY: guests
 guests: $(GUEST_TARGETS)
 
+.PHONY: dummy-guests
 dummy-guests: $(DUMMY_GUEST_TARGETS)
 
 guest-%:
@@ -20,35 +21,45 @@ dummy-guest-%:
 	mkdir -p output
 	touch output/guest-$*.polkavm
 
-tools: polkatool chain-spec-builder
+.PHONY: tools
+tools: polkatool chain-spec-builder pvq-program-metadata-gen
 
+.PHONY: polkatool
 polkatool:
 	cargo install --path vendor/polkavm/tools/polkatool
 
+.PHONY: pvq-program-metadata-gen
 pvq-program-metadata-gen:
 	cargo install --path pvq-program-metadata-gen
 
+.PHONY: chain-spec-builder
 chain-spec-builder:
-	cargo install --path vendor/polkadot-sdk/substrate/bin/utils/chain-spec-builder
+	cargo install --locked chain-spec-builder@0.5.0
 
+.PHONY: fmt
 fmt:
 	cargo fmt --all
 
+.PHONY: check-wasm
 check-wasm:
 	cargo check --no-default-features --target=wasm32-unknown-unknown -p pvq-program -p pvq-executor -p pvq-extension-core -p pvq-extension-fungibles -p pvq-extension -p pvq-primitives -p pvq-runtime-api
 	SKIP_WASM_BUILD= cargo check --no-default-features --target=wasm32-unknown-unknown -p poc-runtime
 
+.PHONY: check
 check: check-wasm
 	SKIP_WASM_BUILD= cargo check
 	cd pvq-program/examples; cargo check
 
+.PHONY: clippy
 clippy:
 	SKIP_WASM_BUILD= cargo clippy -- -D warnings
 	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo clippy --all
 
+.PHONY: test
 test:
 	SKIP_WASM_BUILD= cargo test
 
+.PHONY: chainspec
 chainspec:
 	cargo build -p poc-runtime --release
 	mkdir -p output
