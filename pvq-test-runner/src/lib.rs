@@ -1,5 +1,7 @@
+use acala_primitives::{CurrencyId, TokenSymbol};
 use parity_scale_codec::Encode;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
+use pvq_primitives::PvqResult;
 use sp_core::crypto::{AccountId32, Ss58Codec};
 use sp_core::hexdisplay::HexDisplay;
 
@@ -84,38 +86,60 @@ impl TestRunner {
         }
     }
 
-    pub fn prepare_input_data(program_path: &str) -> Vec<u8> {
+    pub fn prepare_input_data(program_path: &str, chain: &str) -> Vec<u8> {
         let mut input_data = Vec::new();
 
         if program_path.contains("sum-balance") {
-            input_data.extend_from_slice(&21u32.encode());
-
-            let alice_account: [u8; 32] =
-                AccountId32::from_ss58check("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
-                    .expect("Failed to decode Alice's address")
-                    .into();
-            input_data.extend_from_slice(&vec![alice_account].encode());
+            if chain == "poc" {
+                input_data.extend_from_slice(&[0u8]);
+                input_data.extend_from_slice(&21u32.encode());
+                let alice_account: [u8; 32] =
+                    AccountId32::from_ss58check("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+                        .expect("Failed to decode Alice's address")
+                        .into();
+                input_data.extend_from_slice(&vec![alice_account].encode());
+            }
         } else if program_path.contains("total-supply") {
-            input_data.extend_from_slice(&21u32.encode());
-        } else if program_path.contains("transparent-call") {
-            input_data.extend_from_slice(&4071833530116166512u64.encode());
-            let alice_account = AccountId32::from_ss58check("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
-                .expect("Failed to decode Alice's address");
-            input_data.extend_from_slice(
-                &ExtensionFungiblesFunctions::balance {
-                    asset: 21u32,
-                    who: alice_account.into(),
-                }
-                .encode(),
-            );
-        } else if program_path.contains("liquidity-pool") {
-            let asset1 = u32::encode(&21);
-            let asset2 = u32::encode(&22);
-            input_data.extend_from_slice(&asset1.encode());
-            input_data.extend_from_slice(&asset2.encode());
+            if chain == "poc" {
+                input_data.extend_from_slice(&[0u8]);
+                input_data.extend_from_slice(&21u32.encode());
+            }
+        } else if program_path.contains("swap-info") {
+            if chain == "acala" {
+                input_data.extend_from_slice(&[2u8]);
+                let asset1 = CurrencyId::Token(TokenSymbol::ACA).encode();
+                let asset2 = CurrencyId::Token(TokenSymbol::DOT).encode();
+                input_data.extend_from_slice(&asset1.encode());
+                input_data.extend_from_slice(&asset2.encode());
+            }
         }
         tracing::info!("Input data (hex): {}", HexDisplay::from(&input_data));
+        tracing::info!("Using chain: {}", chain);
         input_data
+    }
+
+    pub fn expected_result(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
+        // TODO: add more entrypoints
+        if program_path.contains("swap-info") {
+            if chain == "poc" {
+                return Vec::new();
+            } else if chain == "ah" {
+                if entrypoint_idx == 2 {
+                    return (10_235_709_412_325u128, 12_117_819_770_919u128).encode();
+                }
+            } else if chain == "acala" {
+                if entrypoint_idx == 2 {
+                    return (100_680_000_000_000_000u128, 9_932_526_409_188u128).encode();
+                }
+            }
+        } else if program_path.contains("sum-balance") {
+            return Vec::new();
+        } else if program_path.contains("total-supply") {
+            return Vec::new();
+        }
+
+        // Default empty result
+        Vec::new()
     }
 
     pub fn execute_program(&mut self, program_blob: &[u8], input_data: &[u8]) -> pvq_primitives::PvqResult {

@@ -25,3 +25,5 @@ pvq-extension-swap = { workspace = true, features = ["std"] }
 pvq-primitives = { workspace = true, features = ["std"] }
 
 polkavm = { workspace = true, features = ["std"] }
+
+acala-primitives = { workspace = true, features = ["std"] }
