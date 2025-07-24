@@ -101,6 +101,7 @@ dependencies = [
  "parity-scale-codec",
  "polkavm-derive",
  "pvq-program",
+ "scale-info",
 ]
 
 [[package]]
