@@ -55,6 +55,7 @@ pallet-sudo = { version = "40.0.0", default-features = false }
 pallet-timestamp = { version = "39.0.0", default-features = false }
 pallet-transaction-payment = { version = "40.0.0", default-features = false }
 pallet-transaction-payment-rpc-runtime-api = { version = "40.0.0", default-features = false }
+xcm = { version = "16.2.0", default-features = false, package = "staging-xcm" }
 
 # genesis builder that allows us to interacto with runtime genesis config
 sp-genesis-builder = { version = "0.17.0", default-features = false }
