@@ -16,7 +16,7 @@ mod swap_info {
         pub decimals: u8,
     }
 
-    #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 0)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 0)]
     fn quote_price_tokens_for_exact_tokens(
         asset1: AssetId,
         asset2: AssetId,
@@ -25,7 +25,7 @@ mod swap_info {
     ) -> Option<Balance> {
     }
 
-    #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 1)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 1)]
     fn quote_price_exact_tokens_for_tokens(
         asset1: AssetId,
         asset2: AssetId,
@@ -34,13 +34,13 @@ mod swap_info {
     ) -> Option<Balance> {
     }
 
-    #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 2)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 2)]
     fn get_liquidity_pool(asset1: AssetId, asset2: AssetId) -> Option<(Balance, Balance)> {}
 
-    #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 3)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 3)]
     fn list_pools() -> alloc::vec::Vec<(AssetId, AssetId)> {}
 
-    #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 4)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 4)]
     fn asset_info(asset: AssetId) -> Option<AssetInfo> {}
 
     #[program::entrypoint]
