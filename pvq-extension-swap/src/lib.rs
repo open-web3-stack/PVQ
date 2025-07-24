@@ -29,6 +29,8 @@ pub mod extension {
 
         fn get_liquidity_pool(asset1: Self::AssetId, asset2: Self::AssetId) -> Option<(Self::Balance, Self::Balance)>;
 
-        fn list_pools() -> Vec<(Self::AssetInfo, Self::AssetInfo)>;
+        fn list_pools() -> Vec<(Self::AssetId, Self::AssetId)>;
+
+        fn asset_info(asset: Self::AssetId) -> Option<Self::AssetInfo>;
     }
 }

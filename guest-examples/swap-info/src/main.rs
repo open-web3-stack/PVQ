@@ -11,8 +11,8 @@ mod swap_info {
     )]
     pub struct AssetInfo {
         pub asset_id: AssetId,
-        pub name: alloc::string::String,
-        pub symbol: alloc::string::String,
+        pub name: alloc::vec::Vec<u8>,
+        pub symbol: alloc::vec::Vec<u8>,
         pub decimals: u8,
     }
 
@@ -38,7 +38,10 @@ mod swap_info {
     fn get_liquidity_pool(asset1: AssetId, asset2: AssetId) -> Option<(Balance, Balance)> {}
 
     #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 3)]
-    fn list_pools() -> alloc::vec::Vec<(AssetInfo, AssetInfo)> {}
+    fn list_pools() -> alloc::vec::Vec<(AssetId, AssetId)> {}
+
+    #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 4)]
+    fn asset_info(asset: AssetId) -> Option<AssetInfo> {}
 
     #[program::entrypoint]
     fn entrypoint_quote_price_exact_tokens_for_tokens(
@@ -64,7 +67,12 @@ mod swap_info {
     }
 
     #[program::entrypoint]
-    fn entrypoint_list_pools() -> alloc::vec::Vec<(AssetInfo, AssetInfo)> {
+    fn entrypoint_list_pools() -> alloc::vec::Vec<(AssetId, AssetId)> {
         list_pools()
+    }
+
+    #[program::entrypoint]
+    fn entrypoint_asset_info(asset: AssetId) -> Option<AssetInfo> {
+        asset_info(asset)
     }
 }
