@@ -4,36 +4,16 @@
 #[pvq_program::program]
 mod swap_info {
 
-    cfg_if::cfg_if! {
-        if #[cfg(feature = "asset-hub")] {
-            // Actually AssetHub uses xcm::Location as AssetId, but we use opaque Vec<u8> because some compilation issues.
-            type AssetId = alloc::vec::Vec<u8>;
-            type Balance = u128;
-            #[derive(Debug, Clone, PartialEq, Eq, parity_scale_codec::Encode, parity_scale_codec::Decode, scale_info::TypeInfo)]
-            struct AssetInfo {
-                name: alloc::string::String,
-                symbol: alloc::string::String,
-                decimals: u8,
-            }
-        } else if #[cfg(feature = "acala")] {
-            type AssetId = alloc::vec::Vec<u8>;
-            type Balance = u128;
-            #[derive(Debug, Clone, PartialEq, Eq, parity_scale_codec::Encode, parity_scale_codec::Decode, scale_info::TypeInfo)]
-            struct AssetInfo {
-                name: alloc::string::String,
-                symbol: alloc::string::String,
-                decimals: u8,
-            }
-        } else {
-            type AssetId = alloc::vec::Vec<u8>;
-            type Balance = u128;
-            #[derive(Debug, Clone, PartialEq, Eq, parity_scale_codec::Encode, parity_scale_codec::Decode, scale_info::TypeInfo)]
-            struct AssetInfo {
-                name: alloc::string::String,
-                symbol: alloc::string::String,
-                decimals: u8,
-            }
-        }
+    type AssetId = alloc::vec::Vec<u8>;
+    type Balance = u128;
+    #[derive(
+        Debug, Clone, PartialEq, Eq, parity_scale_codec::Encode, parity_scale_codec::Decode, scale_info::TypeInfo,
+    )]
+    pub struct AssetInfo {
+        pub asset_id: AssetId,
+        pub name: alloc::string::String,
+        pub symbol: alloc::string::String,
+        pub decimals: u8,
     }
 
     #[program::extension_fn(extension_id = 13206387959972970661u64, fn_index = 0)]
