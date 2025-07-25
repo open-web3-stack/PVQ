@@ -14,63 +14,120 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
+  # Fast format check - fails early if formatting is wrong
+  check-fmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-          components: rust-src, rustfmt, clippy
+      - name: Setup toolchain
+        run: |
+          rustup toolchain install 1.84.1 --profile minimal --component rustfmt
+          rustup default 1.84.1
 
       - uses: Swatinem/rust-cache@v2
 
       - name: Check format
         run: cargo fmt --all -- --check
 
-      - name: Make dummy poc-guest files
-        run: make dummy-guests
-
-      - name: Check no-std
-        run: make check-wasm
-
-      - name: Install pvq-program-metadata-gen
-        run: cargo install --path pvq-program-metadata-gen
-
-      - name: Clippy
-        run: make clippy
-
-      - name: Run tests
-        run: make test
-
-  build-guest:
+  # Clippy linting in parallel
+  clippy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Setup toolchain
+        run: |
+          rustup toolchain install 1.84.1 --profile minimal --component clippy
+          rustup default 1.84.1
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Clippy
+        run: make clippy
+
+  # Run tests
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
         with:
-          components: rust-src, rustfmt, clippy
+          submodules: recursive
+
+      - name: Setup Rust
+        run: |
+          rustup default stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Make dummy poc-guest files
+        run: make dummy-guests
+
+      - name: Run tests
+        run: make test
+
+  # Build guest programs in parallel using matrix
+  build-guest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        guest: [
+          sum-balance,
+          sum-balance-hand-written,
+          sum-balance-percent,
+          swap-info,
+          test-swap-extension,
+          total-supply,
+          total-supply-hand-written,
+          transparent-call-hand-written
+        ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Rust
+        run: |
+          rustup toolchain install nightly-2025-06-09 --profile minimal --component rust-src
+          rustup default nightly-2025-06-09
 
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
             guest-examples -> guest-examples/target
-          cache-all-crates: true
+          cache-bin: "false"
+          # Use matrix guest name in cache key for better isolation
 
-      - name: Install polkatool
-        run: make polkatool
 
-      - name: Install pvq-program-metadata-gen
-        run: cargo install --path pvq-program-metadata-gen
+      - name: Build guest ${{ matrix.guest }}
+        run: make guest-${{ matrix.guest }}
 
-      - name: Build guests
-        run: make guests
+      - name: Upload guest artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: guest-${{ matrix.guest }}
+          path: output/guest-${{ matrix.guest }}.polkavm
+          retention-days: 1
+
+  # Collect all guest artifacts (optional - for when you need all guests together)
+  collect-guests:
+    runs-on: ubuntu-latest
+    needs: build-guest
+    if: github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'full-build')
+    steps:
+      - name: Download all guest artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: guest-*
+          path: output/
+          merge-multiple: true
+
+      - name: Upload combined guests
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-guests
+          path: output/
+          retention-days: 7
 

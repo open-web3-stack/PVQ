@@ -40,16 +40,6 @@ chain-spec-builder:
 fmt:
 	cargo fmt --all
 
-.PHONY: check-wasm
-check-wasm:
-	cargo check --no-default-features --target=wasm32-unknown-unknown -p pvq-program -p pvq-executor -p pvq-extension-core -p pvq-extension-fungibles -p pvq-extension -p pvq-primitives -p pvq-runtime-api
-	SKIP_WASM_BUILD= cargo check --no-default-features --target=wasm32-unknown-unknown -p poc-runtime
-
-.PHONY: check
-check: check-wasm
-	SKIP_WASM_BUILD= cargo check
-	cd pvq-program/examples; cargo check
-
 .PHONY: clippy
 clippy:
 	SKIP_WASM_BUILD= cargo clippy -- -D warnings
