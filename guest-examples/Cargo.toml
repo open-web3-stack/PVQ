@@ -6,7 +6,6 @@ members = [
     "total-supply",
     "total-supply-hand-written",
     "transparent-call-hand-written",
-    "test-swap-extension",
     "swap-info",
 ]
 resolver = "2"

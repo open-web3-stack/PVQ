@@ -1,9 +1,0 @@
-[package]
-name = "guest-test-swap-extension"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-parity-scale-codec = { workspace = true }
-polkavm-derive = { workspace = true }
-pvq-program = { workspace = true }
