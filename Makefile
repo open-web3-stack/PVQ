@@ -13,8 +13,8 @@ guests: $(GUEST_TARGETS)
 dummy-guests: $(DUMMY_GUEST_TARGETS)
 
 guest-%:
-	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo build --release --bin guest-$* -p guest-$*
 	mkdir -p output
+	cd guest-examples; METADATA_OUTPUT_DIR=$(shell pwd)/output cargo build --release --bin guest-$* -p guest-$*
 	polkatool link --run-only-if-newer -s guest-examples/target/riscv32emac-unknown-none-polkavm/release/guest-$* -o output/guest-$*.polkavm
 
 dummy-guest-%:
@@ -42,18 +42,29 @@ fmt:
 
 .PHONY: check-wasm
 check-wasm:
-	cargo check --no-default-features --target=wasm32-unknown-unknown -p pvq-program -p pvq-executor -p pvq-extension-core -p pvq-extension-fungibles -p pvq-extension -p pvq-primitives -p pvq-runtime-api
-	SKIP_WASM_BUILD= cargo check --no-default-features --target=wasm32-unknown-unknown -p poc-runtime
+	cargo check --no-default-features --target=wasm32-unknown-unknown \
+		-p pvq-program \
+		-p pvq-program-metadata-gen \
+		-p pvq-executor \
+		-p pvq-extension-core \
+		-p pvq-extension-fungibles \
+		-p pvq-extension-swap \
+		-p pvq-extension \
+		-p pvq-primitives \
+		-p pvq-runtime-api
+	cargo check -p poc-runtime
 
-.PHONY: check
-check: check-wasm
-	SKIP_WASM_BUILD= cargo check
-	cd pvq-program/examples; cargo check
+.PHONY: clippy-root
+clippy-root:
+	SKIP_WASM_BUILD=1 cargo clippy -- -D warnings
+
+.PHONY: clippy-guests
+clippy-guests:
+	mkdir -p output
+	cd guest-examples; METADATA_OUTPUT_DIR=$(shell pwd)/output cargo clippy --all
 
 .PHONY: clippy
-clippy:
-	SKIP_WASM_BUILD= cargo clippy -- -D warnings
-	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo clippy --all
+clippy: clippy-root clippy-guests
 
 .PHONY: test
 test:
