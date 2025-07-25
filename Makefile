@@ -14,7 +14,7 @@ dummy-guests: $(DUMMY_GUEST_TARGETS)
 
 guest-%:
 	mkdir -p output
-	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo build --release --bin guest-$* -p guest-$*
+	cd guest-examples; METADATA_OUTPUT_DIR=$(shell pwd)/output cargo build --release --bin guest-$* -p guest-$*
 	polkatool link --run-only-if-newer -s guest-examples/target/riscv32emac-unknown-none-polkavm/release/guest-$* -o output/guest-$*.polkavm
 
 dummy-guest-%:
@@ -61,7 +61,7 @@ clippy-root:
 .PHONY: clippy-guests
 clippy-guests:
 	mkdir -p output
-	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo clippy --all
+	cd guest-examples; METADATA_OUTPUT_DIR=$(shell pwd)/output cargo clippy --all
 
 .PHONY: clippy
 clippy: clippy-root clippy-guests
