@@ -22,7 +22,7 @@ jobs:
           submodules: recursive
 
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.84.1
         with:
           targets: wasm32-unknown-unknown
           components: rust-src, rustfmt, clippy
@@ -55,7 +55,7 @@ jobs:
           submodules: recursive
 
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly-2025-06-09
         with:
           components: rust-src, rustfmt, clippy
 
