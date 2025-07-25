@@ -125,7 +125,6 @@ jobs:
           sum-balance-hand-written,
           sum-balance-percent,
           swap-info,
-          test-swap-extension,
           total-supply,
           total-supply-hand-written,
           transparent-call-hand-written
