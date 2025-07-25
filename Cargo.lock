@@ -1272,14 +1272,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "example-fungibles"
-version = "0.1.0"
-
-[[package]]
-name = "example-helloworld"
-version = "0.1.0"
-
-[[package]]
 name = "expander"
 version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

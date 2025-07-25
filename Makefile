@@ -40,10 +40,31 @@ chain-spec-builder:
 fmt:
 	cargo fmt --all
 
-.PHONY: clippy
-clippy:
-	SKIP_WASM_BUILD= cargo clippy -- -D warnings
+.PHONY: check-wasm
+check-wasm:
+	cargo check --no-default-features --target=wasm32-unknown-unknown \
+		-p pvq-program \
+		-p pvq-program-metadata-gen \
+		-p pvq-executor \
+		-p pvq-extension-core \
+		-p pvq-extension-fungibles \
+		-p pvq-extension-swap \
+		-p pvq-extension \
+		-p pvq-primitives \
+		-p pvq-runtime-api \
+	cargo check -p poc-runtime
+
+.PHONY: clippy-root
+clippy-root:
+	SKIP_WASM_BUILD=1 cargo clippy -- -D warnings
+
+.PHONY: clippy-guests
+clippy-guests:
+	mkdir -p output
 	cd guest-examples; METADATA_OUTPUT_DIR=$(realpath output) cargo clippy --all
+
+.PHONY: clippy
+clippy: clippy-root clippy-guests
 
 .PHONY: test
 test:

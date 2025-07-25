@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup toolchain
         run: |
@@ -26,12 +28,13 @@ jobs:
           rustup default 1.84.1
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "workspace-root"
 
       - name: Check format
         run: cargo fmt --all -- --check
 
-  # Clippy linting in parallel
-  clippy:
+  check-wasm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,9 +47,60 @@ jobs:
           rustup default 1.84.1
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "workspace-root"
 
-      - name: Clippy
-        run: make clippy
+      - name: Check wasm
+        run: make check-wasm
+
+  # Root workspace clippy linting
+  clippy-root:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup toolchain
+        run: |
+          rustup toolchain install 1.84.1 --profile minimal --component clippy
+          rustup default 1.84.1
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "workspace-root"
+
+      - name: Clippy root workspace
+        run: make clippy-root
+
+  # Guest examples clippy linting
+  clippy-guests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup toolchain
+        run: |
+          rustup toolchain install nightly-2025-06-09 --profile minimal --component clippy
+          rustup default nightly-2025-06-09
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            guest-examples -> guest-examples/target
+          cache-bin: "false"
+
+      - name: Install polkatool and pvq-program-metadata-gen
+        run: |
+          make polkatool
+          make pvq-program-metadata-gen
+
+
+      - name: Clippy guest examples
+        run: make clippy-guests
+
 
   # Run tests
   test:
@@ -56,11 +110,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Rust
+      - name: Setup toolchain
         run: |
-          rustup default stable
+          rustup toolchain install 1.84.1 --profile minimal
+          rustup default 1.84.1
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "workspace-root"
 
       - name: Make dummy poc-guest files
         run: make dummy-guests
@@ -88,7 +145,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Rust
+      - name: Setup toolchain
         run: |
           rustup toolchain install nightly-2025-06-09 --profile minimal --component rust-src
           rustup default nightly-2025-06-09
@@ -98,8 +155,12 @@ jobs:
           workspaces: |
             guest-examples -> guest-examples/target
           cache-bin: "false"
-          # Use matrix guest name in cache key for better isolation
+          prefix-key: "guest-${{ matrix.guest }}"
 
+      - name: Install polkatool and pvq-program-metadata-gen
+        run: |
+          make polkatool
+          make pvq-program-metadata-gen
 
       - name: Build guest ${{ matrix.guest }}
         run: make guest-${{ matrix.guest }}

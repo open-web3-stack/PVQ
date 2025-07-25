@@ -20,9 +20,6 @@ members = [
     "pvq-primitives",
     "pvq-runtime-api",
     "pvq-test-runner",
-
-    "examples/example-fungibles",
-    "examples/example-helloworld",
 ]
 exclude = ["guest-examples", "vendor"]
 
