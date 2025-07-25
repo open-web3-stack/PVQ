@@ -55,7 +55,7 @@ jobs:
           submodules: recursive
 
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@nightly-2025-06-09
+        uses: dtolnay/rust-toolchain@nightly
         with:
           components: rust-src, rustfmt, clippy
 
