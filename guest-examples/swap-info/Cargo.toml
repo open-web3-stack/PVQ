@@ -5,11 +5,8 @@ edition = "2021"
 publish = false
 
 [dependencies]
+scale-info = { workspace = true }
 parity-scale-codec = { workspace = true }
 polkavm-derive = { workspace = true }
 pvq-program = { workspace = true }
 cfg-if = { workspace = true }
-
-[features]
-asset-hub = []
-acala = []

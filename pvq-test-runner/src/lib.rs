@@ -43,6 +43,7 @@ pub mod extensions {
     impl pvq_extension_swap::extension::ExtensionSwap for ExtensionsImpl {
         type AssetId = Vec<u8>;
         type Balance = u128;
+        type AssetInfo = ();
         fn quote_price_tokens_for_exact_tokens(
             _asset1: Self::AssetId,
             _asset2: Self::AssetId,
@@ -67,8 +68,12 @@ pub mod extensions {
             Some((100, 100))
         }
 
-        fn list_pools() -> Vec<(Self::AssetId, Self::AssetId, Self::Balance, Self::Balance)> {
+        fn list_pools() -> Vec<(Self::AssetId, Self::AssetId)> {
             vec![]
+        }
+
+        fn asset_info(_asset: Self::AssetId) -> Option<Self::AssetInfo> {
+            None
         }
     }
 }

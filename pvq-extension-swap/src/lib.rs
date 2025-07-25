@@ -11,6 +11,7 @@ pub mod extension {
     pub trait ExtensionSwap {
         type AssetId;
         type Balance;
+        type AssetInfo;
 
         fn quote_price_tokens_for_exact_tokens(
             asset1: Self::AssetId,
@@ -28,7 +29,8 @@ pub mod extension {
 
         fn get_liquidity_pool(asset1: Self::AssetId, asset2: Self::AssetId) -> Option<(Self::Balance, Self::Balance)>;
 
-        #[allow(clippy::type_complexity)]
-        fn list_pools() -> Vec<(Self::AssetId, Self::AssetId, Self::Balance, Self::Balance)>;
+        fn list_pools() -> Vec<(Self::AssetId, Self::AssetId)>;
+
+        fn asset_info(asset: Self::AssetId) -> Option<Self::AssetInfo>;
     }
 }
