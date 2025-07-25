@@ -1,10 +1,8 @@
-use parity_scale_codec::{Decode, Encode};
+use parity_scale_codec::Encode;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
-use pvq_primitives::PvqResult;
 use sp_core::crypto::{AccountId32, Ss58Codec};
 use sp_core::hexdisplay::HexDisplay;
 use xcm::v5::Junction::{GeneralIndex, PalletInstance};
-use xcm::v5::Junctions::Here;
 use xcm::v5::Location;
 
 #[derive(Encode)]
@@ -112,6 +110,7 @@ impl TestRunner {
                 input_data.extend_from_slice(&21u32.encode());
             }
         } else if program_path.contains("swap-info") {
+            #[allow(clippy::collapsible_if)]
             if chain == "ah" {
                 input_data.extend_from_slice(&[2u8]);
                 let asset1 = Location::parent().encode();
@@ -127,18 +126,8 @@ impl TestRunner {
 
     pub fn expected_result(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
         // TODO: add more entrypoints
-        if program_path.contains("swap-info") {
-            if chain == "poc" {
-                return Vec::new();
-            } else if chain == "ah" {
-                if entrypoint_idx == 2 {
-                    return (10_235_709_412_325u128, 12_117_819_770_919u128).encode();
-                }
-            }
-        } else if program_path.contains("sum-balance") {
-            return Vec::new();
-        } else if program_path.contains("total-supply") {
-            return Vec::new();
+        if program_path.contains("swap-info") && chain == "ah" && entrypoint_idx == 2 {
+            return (10_235_709_412_325u128, 12_117_819_770_919u128).encode();
         }
 
         // Default empty result

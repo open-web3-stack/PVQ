@@ -27,7 +27,6 @@ struct Cli {
 #[derive(clap::ValueEnum, Clone, Debug)]
 enum Chain {
     Poc,
-    Acala,
     Ah,
 }
 
@@ -35,7 +34,6 @@ impl std::fmt::Display for Chain {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Chain::Poc => write!(f, "poc"),
-            Chain::Acala => write!(f, "acala"),
             Chain::Ah => write!(f, "ah"),
         }
     }
