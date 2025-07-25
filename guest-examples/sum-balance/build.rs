@@ -8,7 +8,7 @@ fn main() {
     let current_dir = env::current_dir().expect("Failed to get current directory");
     // Determine the output directory for the metadata
     let output_dir = PathBuf::from(env::var("METADATA_OUTPUT_DIR").expect("METADATA_OUTPUT_DIR is not set"));
-    println!("output_dir: {:?}", output_dir);
+    panic!("output_dir: {:?}", output_dir);
 
     // Build and run the command
     let status = Command::new("pvq-program-metadata-gen")
