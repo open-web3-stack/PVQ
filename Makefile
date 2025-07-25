@@ -51,7 +51,7 @@ check-wasm:
 		-p pvq-extension-swap \
 		-p pvq-extension \
 		-p pvq-primitives \
-		-p pvq-runtime-api \
+		-p pvq-runtime-api
 	cargo check -p poc-runtime
 
 .PHONY: clippy-root

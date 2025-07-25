@@ -88,8 +88,6 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: |
-            guest-examples -> guest-examples/target
           cache-bin: "false"
 
       - name: Install polkatool and pvq-program-metadata-gen
@@ -152,8 +150,6 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: |
-            guest-examples -> guest-examples/target
           cache-bin: "false"
           prefix-key: "guest-${{ matrix.guest }}"
 
