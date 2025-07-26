@@ -67,12 +67,19 @@ mod swap_info {
     }
 
     #[program::entrypoint]
-    fn entrypoint_list_pools() -> alloc::vec::Vec<(AssetId, AssetId)> {
-        list_pools()
-    }
-
-    #[program::entrypoint]
-    fn entrypoint_asset_info(asset: AssetId) -> Option<AssetInfo> {
-        asset_info(asset)
+    fn entrypoint_list_pools() -> alloc::vec::Vec<(AssetInfo, AssetInfo)> {
+        let pools = list_pools();
+        let mut result = alloc::vec::Vec::new();
+        for pool in pools {
+            let asset1_info = asset_info(pool.0);
+            let asset2_info = asset_info(pool.1);
+            if asset1_info.is_some() && asset2_info.is_some() {
+                result.push((
+                    asset1_info.expect("checked before"),
+                    asset2_info.expect("checked before"),
+                ));
+            }
+        }
+        result
     }
 }
