@@ -5,7 +5,6 @@ use pvq_extension::extension_decl;
 
 #[extension_decl]
 pub mod extension {
-    use alloc::collections::BTreeMap;
     use alloc::vec::Vec;
 
     #[extension_decl::extension]
@@ -33,7 +32,5 @@ pub mod extension {
         fn list_pools() -> Vec<(Self::AssetId, Self::AssetId)>;
 
         fn asset_info(asset: Self::AssetId) -> Option<Self::AssetInfo>;
-
-        fn assets_info() -> BTreeMap<Self::AssetId, Self::AssetInfo>;
     }
 }

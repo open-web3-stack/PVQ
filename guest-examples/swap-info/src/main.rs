@@ -16,7 +16,7 @@ mod swap_info {
         pub decimals: u8,
     }
 
-    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 0)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 0)]
     fn quote_price_tokens_for_exact_tokens(
         asset1: AssetId,
         asset2: AssetId,
@@ -25,7 +25,7 @@ mod swap_info {
     ) -> Option<Balance> {
     }
 
-    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 1)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 1)]
     fn quote_price_exact_tokens_for_tokens(
         asset1: AssetId,
         asset2: AssetId,
@@ -34,17 +34,14 @@ mod swap_info {
     ) -> Option<Balance> {
     }
 
-    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 2)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 2)]
     fn get_liquidity_pool(asset1: AssetId, asset2: AssetId) -> Option<(Balance, Balance)> {}
 
-    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 3)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 3)]
     fn list_pools() -> alloc::vec::Vec<(AssetId, AssetId)> {}
 
-    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 4)]
+    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 4)]
     fn asset_info(asset: AssetId) -> Option<AssetInfo> {}
-
-    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 5)]
-    fn assets_info() -> alloc::collections::BTreeMap<AssetId, AssetInfo> {}
 
     #[program::entrypoint]
     fn entrypoint_quote_price_exact_tokens_for_tokens(
@@ -72,16 +69,12 @@ mod swap_info {
     #[program::entrypoint]
     fn entrypoint_list_pools() -> alloc::vec::Vec<(AssetInfo, AssetInfo)> {
         let pools = list_pools();
-        let assets_info = assets_info();
         let mut result = alloc::vec::Vec::new();
         for pool in pools {
-            let asset1_info = assets_info.get(&pool.0).cloned();
-            let asset2_info = assets_info.get(&pool.1).cloned();
-            if asset1_info.is_some() && asset2_info.is_some() {
-                result.push((
-                    asset1_info.expect("checked before"),
-                    asset2_info.expect("checked before"),
-                ));
+            let asset1_info = asset_info(pool.0.clone());
+            let asset2_info = asset_info(pool.1.clone());
+            if let (Some(a1), Some(a2)) = (asset1_info, asset2_info) {
+                result.push((a1, a2));
             }
         }
         result
