@@ -17,6 +17,8 @@ pub enum ExtensionFungiblesFunctions {
 
 #[extensions_impl]
 pub mod extensions {
+    use std::collections::BTreeMap;
+
     use parity_scale_codec::Decode;
 
     #[extensions_impl::impl_struct]
@@ -77,6 +79,10 @@ pub mod extensions {
 
         fn asset_info(_asset: Self::AssetId) -> Option<Self::AssetInfo> {
             None
+        }
+
+        fn assets_info() -> BTreeMap<Self::AssetId, Self::AssetInfo> {
+            BTreeMap::new()
         }
     }
 }
