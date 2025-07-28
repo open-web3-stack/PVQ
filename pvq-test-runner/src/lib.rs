@@ -18,6 +18,7 @@ pub enum ExtensionFungiblesFunctions {
 #[extensions_impl]
 pub mod extensions {
     use parity_scale_codec::Decode;
+
     #[extensions_impl::impl_struct]
     pub struct ExtensionsImpl;
 
