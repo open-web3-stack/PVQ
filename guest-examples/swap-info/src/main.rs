@@ -16,7 +16,7 @@ mod swap_info {
         pub decimals: u8,
     }
 
-    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 0)]
+    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 0)]
     fn quote_price_tokens_for_exact_tokens(
         asset1: AssetId,
         asset2: AssetId,
@@ -25,7 +25,7 @@ mod swap_info {
     ) -> Option<Balance> {
     }
 
-    #[program::extension_fn(extension_id = 17401483330909459524u64, fn_index = 1)]
+    #[program::extension_fn(extension_id = 15900548380266538526u64, fn_index = 1)]
     fn quote_price_exact_tokens_for_tokens(
         asset1: AssetId,
         asset2: AssetId,
@@ -75,8 +75,8 @@ mod swap_info {
         let mut result = alloc::vec::Vec::new();
         let assets_info = assets_info();
         for pool in pools {
-            let asset1_info = asset_info(pool.0.clone());
-            let asset2_info = asset_info(pool.1.clone());
+            let asset1_info = assets_info.get(&pool.0).cloned();
+            let asset2_info = assets_info.get(&pool.1).cloned();
             if let (Some(a1), Some(a2)) = (asset1_info, asset2_info) {
                 result.push((a1, a2));
             }
