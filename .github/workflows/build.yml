@@ -127,7 +127,6 @@ jobs:
     if: |
       github.ref == 'refs/heads/master' ||
       startsWith(github.ref, 'refs/heads/release/') ||
-      startsWith(github.ref, 'refs/heads/hotfix/') ||
       startsWith(github.ref, 'refs/tags/v') ||
       contains(github.event.pull_request.labels.*.name, 'full-build')
     strategy:
