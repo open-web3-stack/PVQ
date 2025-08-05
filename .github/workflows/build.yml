@@ -2,7 +2,12 @@ name: Build
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - "master"
+      - "feat/**"
+      - "fix/**"
+    tags:
+      - "v*.*.*"  # Semantic version tags
   pull_request:
     branches: ["master"]
 
@@ -118,6 +123,12 @@ jobs:
   # Build guest programs in parallel using matrix
   build-guest:
     runs-on: ubuntu-latest
+    # Run on main branches, release branches, or when explicitly requested
+    if: |
+      github.ref == 'refs/heads/master' ||
+      startsWith(github.ref, 'refs/heads/release/') ||
+      startsWith(github.ref, 'refs/tags/v') ||
+      contains(github.event.pull_request.labels.*.name, 'full-build')
     strategy:
       matrix:
         guest: [
@@ -182,4 +193,3 @@ jobs:
           name: all-guests
           path: output/
           retention-days: 7
-
