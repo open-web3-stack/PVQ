@@ -120,8 +120,8 @@ jobs:
       - name: Run tests
         run: make test
 
-  # Build guest programs in parallel using matrix
-  build-guest:
+  # Generate guest program list dynamically
+  generate-guest-matrix:
     runs-on: ubuntu-latest
     # Run on main branches, release branches, or when explicitly requested
     if: |
@@ -129,17 +129,28 @@ jobs:
       startsWith(github.ref, 'refs/heads/release/') ||
       startsWith(github.ref, 'refs/tags/v') ||
       contains(github.event.pull_request.labels.*.name, 'full-build')
+    outputs:
+      guest-matrix: ${{ steps.generate-matrix.outputs.guest-matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Generate guest matrix
+        id: generate-matrix
+        run: |
+          # Extract package names from Cargo.toml files
+          guests=$(find guest-examples -name "Cargo.toml" -not -path "guest-examples/Cargo.toml" | xargs -I{} sh -c 'grep "^name" "{}" | cut -d"=" -f2 | tr -d " \""' | jq -R -s -c 'split("\n")[:-1]')
+          echo "guest-matrix=$guests" >> $GITHUB_OUTPUT
+          echo "Found guest programs: $guests"
+
+  # Build guest programs in parallel using dynamic matrix
+  build-guest:
+    runs-on: ubuntu-latest
+    needs: generate-guest-matrix
     strategy:
       matrix:
-        guest: [
-          sum-balance,
-          sum-balance-hand-written,
-          sum-balance-percent,
-          swap-info,
-          total-supply,
-          total-supply-hand-written,
-          transparent-call-hand-written
-        ]
+        guest: ${{ fromJson(needs.generate-guest-matrix.outputs.guest-matrix) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -153,7 +164,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           cache-bin: "false"
-          prefix-key: "guest-${{ matrix.guest }}"
+          prefix-key: "${{ matrix.guest }}"
 
       - name: Install polkatool and pvq-program-metadata-gen
         run: |
@@ -177,7 +188,7 @@ jobs:
   # Collect all guest artifacts (optional - for when you need all guests together)
   collect-guests:
     runs-on: ubuntu-latest
-    needs: build-guest
+    needs: [generate-guest-matrix, build-guest]
     if: github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'full-build')
     steps:
       - name: Download all guest artifacts

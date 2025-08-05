@@ -1,13 +1,5 @@
 [workspace]
-members = [
-    "sum-balance",
-    "sum-balance-percent",
-    "sum-balance-hand-written",
-    "total-supply",
-    "total-supply-hand-written",
-    "transparent-call-hand-written",
-    "swap-info",
-]
+members = ["sum-balance", "sum-balance-percent", "total-supply", "swap-info"]
 resolver = "2"
 
 [workspace.dependencies]
