@@ -67,68 +67,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "guest-sum-balance"
-version = "0.1.0"
-dependencies = [
- "cfg-if",
- "parity-scale-codec",
- "polkavm-derive",
- "pvq-program",
-]
-
-[[package]]
-name = "guest-sum-balance-hand-written"
-version = "0.1.0"
-dependencies = [
- "parity-scale-codec",
- "polkavm-derive",
-]
-
-[[package]]
-name = "guest-sum-balance-percent"
-version = "0.1.0"
-dependencies = [
- "parity-scale-codec",
- "polkavm-derive",
- "pvq-program",
-]
-
-[[package]]
-name = "guest-swap-info"
-version = "0.1.0"
-dependencies = [
- "cfg-if",
- "parity-scale-codec",
- "polkavm-derive",
- "pvq-program",
- "scale-info",
-]
-
-[[package]]
-name = "guest-total-supply"
-version = "0.1.0"
-dependencies = [
- "parity-scale-codec",
- "polkavm-derive",
- "pvq-program",
-]
-
-[[package]]
-name = "guest-total-supply-hand-written"
-version = "0.1.0"
-dependencies = [
- "parity-scale-codec",
- "polkavm-derive",
-]
-
-[[package]]
-name = "guest-transparent-call-hand-written"
-version = "0.1.0"
-dependencies = [
- "polkavm-derive",
-]
-
-[[package]]
 name = "hashbrown"
 version = "0.15.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -315,6 +253,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "sum-balance"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "parity-scale-codec",
+ "polkavm-derive",
+ "pvq-program",
+]
+
+[[package]]
+name = "sum-balance-percent"
+version = "0.1.0"
+dependencies = [
+ "parity-scale-codec",
+ "polkavm-derive",
+ "pvq-program",
+]
+
+[[package]]
+name = "swap-info"
+version = "0.1.0"
+dependencies = [
+ "cfg-if",
+ "parity-scale-codec",
+ "polkavm-derive",
+ "pvq-program",
+ "scale-info",
+]
+
+[[package]]
 name = "syn"
 version = "2.0.100"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -340,6 +308,15 @@ dependencies = [
  "indexmap",
  "toml_datetime",
  "winnow",
+]
+
+[[package]]
+name = "total-supply"
+version = "0.1.0"
+dependencies = [
+ "parity-scale-codec",
+ "polkavm-derive",
+ "pvq-program",
 ]
 
 [[package]]
