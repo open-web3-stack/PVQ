@@ -2,7 +2,12 @@ name: Build
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - "master"
+      - "feat/**"
+      - "fix/**"
+    tags:
+      - "v*.*.*"  # Semantic version tags
   pull_request:
     branches: ["master"]
 
@@ -118,6 +123,14 @@ jobs:
   # Build guest programs in parallel using matrix
   build-guest:
     runs-on: ubuntu-latest
+    # Run on main branches, release branches, or when explicitly requested
+    if: |
+      github.ref == 'refs/heads/master' ||
+      github.ref == 'refs/heads/develop' ||
+      startsWith(github.ref, 'refs/heads/release/') ||
+      startsWith(github.ref, 'refs/heads/hotfix/') ||
+      startsWith(github.ref, 'refs/tags/v') ||
+      contains(github.event.pull_request.labels.*.name, 'full-build')
     strategy:
       matrix:
         guest: [
@@ -182,4 +195,34 @@ jobs:
           name: all-guests
           path: output/
           retention-days: 7
+
+  # Semantic release - automatically create releases based on conventional commits
+  semantic-release:
+    runs-on: ubuntu-latest
+    # Only run on master branch pushes after all other jobs pass
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: [check-fmt, check-wasm, clippy-root, clippy-guests, test, build-guest]
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install semantic-release
+        run: |
+          npm install -g semantic-release @semantic-release/changelog @semantic-release/git
+
+      - name: Semantic Release
+        run: semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
