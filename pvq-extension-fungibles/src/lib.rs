@@ -3,11 +3,17 @@ use pvq_extension::extension_decl;
 
 #[extension_decl]
 pub mod extension {
+    use scale_info::prelude::vec::Vec;
     #[extension_decl::extension]
     pub trait ExtensionFungibles {
         type AssetId;
         type Balance;
         type AccountId;
+        fn asset_exists(asset: Self::AssetId) -> bool;
+        fn name(asset: Self::AssetId) -> Vec<u8>;
+        fn symbol(asset: Self::AssetId) -> Vec<u8>;
+        fn decimals(asset: Self::AssetId) -> u8;
+        fn minimum_balance(asset: Self::AssetId) -> Self::Balance;
         fn total_supply(asset: Self::AssetId) -> Self::Balance;
         fn balance(asset: Self::AssetId, who: Self::AccountId) -> Self::Balance;
     }
