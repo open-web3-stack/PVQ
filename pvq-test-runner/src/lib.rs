@@ -37,8 +37,23 @@ pub mod extensions {
         type AssetId = u32;
         type AccountId = [u8; 32];
         type Balance = u64;
+        fn name(_asset: Self::AssetId) -> Vec<u8> {
+            b"Test".to_vec()
+        }
+        fn symbol(_asset: Self::AssetId) -> Vec<u8> {
+            b"TEST".to_vec()
+        }
+        fn decimals(_asset: Self::AssetId) -> u8 {
+            18
+        }
         fn total_supply(_asset: Self::AssetId) -> Self::Balance {
             100
+        }
+        fn minimum_balance(_asset: Self::AssetId) -> Self::Balance {
+            100
+        }
+        fn asset_exists(_asset: Self::AssetId) -> bool {
+            true
         }
         fn balance(_asset: Self::AssetId, _who: Self::AccountId) -> Self::Balance {
             100
@@ -133,6 +148,9 @@ impl TestRunner {
 
     pub fn expected_result(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
         // TODO: add more entrypoints
+        if program_path.contains("sum-balance") && chain == "poc" && entrypoint_idx == 0 {
+            return 1000_000_000u64.encode();
+        }
         if program_path.contains("swap-info") && chain == "ah" && entrypoint_idx == 2 {
             return (10_235_709_412_325u128, 12_117_819_770_919u128).encode();
         }

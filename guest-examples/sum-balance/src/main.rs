@@ -20,7 +20,7 @@ mod sum_balance {
         }
     }
 
-    #[program::extension_fn(extension_id = 4071833530116166512u64, fn_index = 1)]
+    #[program::extension_fn(extension_id = 1248491991627109725u64, fn_index = 6)]
     fn balance(asset: AssetId, who: AccountId) -> Balance {}
 
     #[program::entrypoint]
