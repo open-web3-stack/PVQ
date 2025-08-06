@@ -149,7 +149,7 @@ impl TestRunner {
     pub fn expected_result(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
         // TODO: add more entrypoints
         if program_path.contains("sum-balance") && chain == "poc" && entrypoint_idx == 0 {
-            return 1000_000_000u64.encode();
+            return 1_000_000_000u64.encode();
         }
         if program_path.contains("swap-info") && chain == "ah" && entrypoint_idx == 2 {
             return (10_235_709_412_325u128, 12_117_819_770_919u128).encode();
