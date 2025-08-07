@@ -1,3 +1,5 @@
+// REVIEW: The crate lacks any form of testing for its own logic. While it is a test runner, adding unit tests for functions like `prepare_input_data` and `expected_result` would improve its reliability.
+// REVIEW: There is no `README.md` file in the crate, making it difficult for new contributors to understand its purpose and usage. A `README.md` file should be created.
 use parity_scale_codec::Encode;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
 use sp_core::crypto::{AccountId32, Ss58Codec};
@@ -98,6 +100,9 @@ impl TestRunner {
         }
     }
 
+    // REVIEW: The `prepare_input_data` and `get_liquidity_pool` functions use `expect()` which
+    // can cause the program to panic. Consider returning a `Result` and using the `?`
+    // operator to propagate errors. This will make the error handling more robust.
     pub fn prepare_input_data(program_path: &str, chain: &str) -> Vec<u8> {
         let mut input_data = Vec::new();
 

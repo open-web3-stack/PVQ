@@ -14,6 +14,8 @@ pub struct PvqExecutor<Ctx: PvqExecutorContext> {
 }
 
 impl<Ctx: PvqExecutorContext> PvqExecutor<Ctx> {
+    // REVIEW: The use of `.unwrap()` when creating a new `Engine` can cause a panic.
+    // This should be replaced with proper error handling, for instance, by returning a `Result`.
     pub fn new(config: Config, mut context: Ctx) -> Self {
         let engine = Engine::new(&config).unwrap();
         let mut linker = Linker::<Ctx::UserData, Ctx::UserError>::new();
@@ -26,6 +28,10 @@ impl<Ctx: PvqExecutorContext> PvqExecutor<Ctx> {
         }
     }
 
+    // REVIEW: The `execute` function is overly long and complex. It should be broken down into smaller,
+    // more focused functions to improve readability and maintainability.
+    // REVIEW: The `execute` function returns a tuple `(PvqExecutorResult<Ctx::UserError>, GasLimit)`.
+    // This should be encapsulated in a dedicated struct for better clarity.
     pub fn execute(
         &mut self,
         program: &[u8],

@@ -39,6 +39,8 @@ impl std::fmt::Display for Chain {
     }
 }
 
+// REVIEW: The `main` function is doing too much. It should be broken down into smaller functions for better readability and maintainability (e.g., a function for initializing tracing, a function for parsing args, a function for running the test).
+// REVIEW: The `main` function uses `expect()` and `unwrap()` which can cause the program to panic. It should be updated to return a `Result` and propagate errors gracefully.
 fn main() {
     let registry = tracing_subscriber::registry();
 

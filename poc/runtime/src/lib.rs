@@ -1,3 +1,5 @@
+// REVIEW: The runtime lacks tests. While it's a proof-of-concept, adding some basic tests for the custom logic (like the PVQ execution) would be beneficial.
+// REVIEW: A `README.md` file in the `poc/runtime` directory would be helpful to explain its purpose, how to build it, and how to run it with a node.
 #![cfg_attr(not(feature = "std"), no_std)]
 // Frame macros reference features which this crate does not have
 #![allow(unexpected_cfgs)]
@@ -230,6 +232,9 @@ impl_runtime_apis! {
     }
 
     impl pvq_runtime_api::PvqApi<Block> for Runtime {
+        // REVIEW: The default gas limit is hardcoded here. It would be better to define this as a
+        // constant, e.g., `const DEFAULT_GAS_LIMIT: i64 = ONE_SECOND_IN_GAS * 2;` and then use
+        // that constant here. This will improve readability and maintainability.
         fn execute_query(program: Vec<u8>, args: Vec<u8>, gas_limit: Option<i64>) -> pvq_primitives::PvqResult {
             // Set a default gas limit of 2 seconds
             pvq::execute_query(&program, &args, gas_limit.unwrap_or(ONE_SECOND_IN_GAS * 2))

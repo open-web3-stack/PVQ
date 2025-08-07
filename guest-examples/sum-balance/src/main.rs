@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 
+// REVIEW: The `extension_id` is a magic number. It would be better to define it as a constant with a descriptive name.
 #[pvq_program::program]
 mod sum_balance {
 

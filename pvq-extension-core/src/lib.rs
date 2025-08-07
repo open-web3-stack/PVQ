@@ -1,3 +1,7 @@
+// REVIEW: The crate lacks any form of testing, which is critical for ensuring its correctness and stability.
+// Unit tests should be added.
+// REVIEW: There is no `README.md` file in the crate, making it difficult for new contributors to understand its purpose and usage.
+// A `README.md` file should be created.
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use pvq_extension::extension_decl;
@@ -8,6 +12,9 @@ pub mod extension {
     pub trait ExtensionCore {
         type ExtensionId;
         fn has_extension(id: Self::ExtensionId) -> bool;
+
+        // REVIEW: The following crypto and storage functions are commented out.
+        // They should be implemented or removed.
         // crypto functions
         // fn blake2_64(data: Vec<u8>) -> [u8; 8];
         // fn blake2_128(data: Vec<u8>) -> [u8; 16];

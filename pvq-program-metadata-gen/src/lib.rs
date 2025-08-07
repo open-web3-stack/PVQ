@@ -1,3 +1,5 @@
+// REVIEW: The crate lacks any form of testing, which is critical for ensuring its correctness and stability.
+// Unit tests should be added.
 pub type ExtensionId = u64;
 pub type FnIndex = u8;
 mod features;

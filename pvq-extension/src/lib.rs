@@ -1,3 +1,6 @@
+// REVIEW: The crate lacks any form of testing, which is critical for ensuring its correctness and stability.
+// Unit tests should be added.
+// REVIEW: While there are documentation comments, a `README.md` file would be beneficial for new contributors to understand the crate's purpose and usage.
 #![cfg_attr(not(feature = "std"), no_std)]
 //! # PVQ Extension System
 //!

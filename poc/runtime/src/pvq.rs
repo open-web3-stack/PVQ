@@ -1,6 +1,7 @@
 #[allow(unused_imports)]
 use frame::deps::scale_info::prelude::{format, string::String};
 
+// REVIEW: The extension implementations in this file are not tested. Unit tests should be added to ensure they behave as expected.
 use pvq_extension::metadata::Metadata;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
 

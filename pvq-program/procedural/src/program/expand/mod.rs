@@ -28,6 +28,10 @@ pub fn expand(mut def: Def) -> TokenStream2 {
     def.item.into_token_stream()
 }
 
+// REVIEW: The `expand_extension_fn` and `expand_main` functions use `expect()` and
+// `unreachable!()` in several places. While some of these might be safe due to checks in the
+// parsing stage, it's generally better to return a `compile_error!` with a descriptive
+// message. This will provide better error messages to the user of the macro.
 fn expand_extension_fn(extension_fn: &mut ExtensionFn, parity_scale_codec: &syn::Path) -> TokenStream2 {
     let extension_id = extension_fn.extension_id;
     let fn_index = extension_fn.fn_index;

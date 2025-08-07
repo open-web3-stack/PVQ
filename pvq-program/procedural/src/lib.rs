@@ -21,6 +21,8 @@
 /// }
 /// ```
 ///
+// REVIEW: The procedural macro lacks tests. UI tests should be added to ensure the macro generates correct code and provides good error messages for invalid input.
+// REVIEW: A `README.md` file in the `procedural` crate's directory would be beneficial to explain its usage and how it works.
 mod program;
 use proc_macro::TokenStream;
 

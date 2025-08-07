@@ -15,6 +15,8 @@ struct Args {
     output_dir: PathBuf,
 }
 
+// REVIEW: The `main` function is overly long and complex. It should be broken down into smaller,
+// more focused functions to improve readability and maintainability.
 fn main() {
     // Initialize tracing
     tracing_subscriber::fmt::init();
@@ -79,3 +81,7 @@ fn main() {
     }
     info!("Metadata generation successful!");
 }
+
+// REVIEW: The `main` function uses `expect()` in multiple places, which can cause the
+// program to panic. Consider returning a `Result` from `main` and using the `?` operator to
+// propagate errors. This will make the error handling more robust.
