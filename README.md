@@ -146,7 +146,7 @@ pub trait MyCustomExtension {
 ### Component Documentation
 
 - 📚 **[Development Guide](docs/development.md)** - Comprehensive development setup
-- 🔧 **[Extension Development](docs/extensions.md)** - Creating custom extensions  
+- 🔧 **[Extension Development](docs/extensions.md)** - Creating custom extensions
 - 🏗️ **[Architecture Deep Dive](docs/architecture.md)** - System design and internals
 - 📋 **[API Reference](docs/api.md)** - Complete API documentation
 
@@ -200,46 +200,3 @@ cargo test -p pvq-executor
 # Run example programs
 make test-guests
 ```
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes and add tests
-4. Ensure all tests pass (`cargo test --all`)
-5. Run formatting (`cargo fmt`) and linting (`cargo clippy`)
-6. Commit your changes (`git commit -am 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
-### Code Style
-
-- Follow Rust standard formatting (`cargo fmt`)
-- Ensure clippy passes (`cargo clippy`)
-- Add comprehensive tests for new features
-- Document public APIs with rustdoc comments
-
-## 📄 License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [PolkaVM](https://github.com/koute/polkavm) - The underlying virtual machine
-- [Substrate](https://substrate.io/) - The blockchain development framework
-- [Polkadot](https://polkadot.network/) - The multi-chain protocol
-
-## 🔗 Links
-
-- 🌐 **Homepage**: [https://acala.network](https://acala.network)
-- 📖 **Documentation**: [https://docs.pvq.dev](https://docs.pvq.dev)
-- 💬 **Discord**: [Join our community](https://discord.gg/acala)
-- 🐦 **Twitter**: [@AcalaNetwork](https://twitter.com/AcalaNetwork)
-
----
-
-**Built with ❤️ by the Acala team**

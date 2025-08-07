@@ -16,7 +16,7 @@ This PoC runtime showcases how to:
 
 - 🏗️ **Complete Runtime**: Full Substrate runtime with PVQ integration
 - 🔌 **Extension Support**: Pre-configured with core PVQ extensions
-- 🧪 **Testing Ready**: Optimized for development and testing workflows  
+- 🧪 **Testing Ready**: Optimized for development and testing workflows
 - 📡 **Chopsticks Compatible**: Works with Chopsticks for local development
 - ⚙️ **Configurable**: Easy to modify and extend for custom use cases
 
@@ -163,7 +163,7 @@ pub const EXTENSIONS: &[&str] = &["core", "fungibles", "swap"];
 2. **Configure in PVQ setup:**
    ```rust
    use my_pvq_extension::ExtensionMyCustom;
-   
+
    // Add to extensions list
    ```
 
@@ -239,15 +239,6 @@ Enable debug logging:
 ```bash
 RUST_LOG=debug cargo run -p pvq-test-runner -- --program output/guest-example
 ```
-
-## Contributing
-
-When modifying the PoC runtime:
-
-1. Maintain compatibility with existing PVQ programs
-2. Update tests for any configuration changes  
-3. Document any new pallets or extensions
-4. Test with both Chopsticks and the test runner
 
 ## Related Components
 
