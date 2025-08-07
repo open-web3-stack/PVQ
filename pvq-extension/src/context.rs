@@ -1,3 +1,4 @@
+//! This module defines the execution context for extensions.
 use pvq_executor::{Caller, Linker, PvqExecutorContext};
 use scale_info::prelude::marker::PhantomData;
 
@@ -7,25 +8,25 @@ use crate::{
     CallDataTuple,
 };
 
-/// Execution context for extensions
+/// The execution context for extensions.
 ///
 /// This struct provides the context for executing extensions.
 /// It includes the invoke source and user data.
 pub struct Context<C: CallDataTuple, P: PermissionController> {
-    /// The source of the invocation
+    /// The source of the invocation.
     invoke_source: InvokeSource,
-    /// User data for the context
+    /// User data for the context.
     user_data: (),
-    /// Marker for the generic parameters
+    /// A marker for the generic parameters.
     _marker: PhantomData<(C, P)>,
 }
 
 impl<C: CallDataTuple, P: PermissionController> Context<C, P> {
-    /// Create a new context
+    /// Creates a new context.
     ///
     /// # Arguments
     ///
-    /// * `invoke_source` - The source of the invocation
+    /// * `invoke_source`: The source of the invocation.
     pub fn new(invoke_source: InvokeSource) -> Self {
         Self {
             invoke_source,

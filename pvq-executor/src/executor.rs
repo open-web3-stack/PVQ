@@ -4,9 +4,12 @@ use polkavm::{Config, Engine, Linker, Module, ModuleConfig, ProgramBlob};
 use crate::context::PvqExecutorContext;
 use crate::error::PvqExecutorError;
 
+/// The result of a PVQ execution.
 type PvqExecutorResult<UserError> = Result<Vec<u8>, PvqExecutorError<UserError>>;
+/// The gas limit for a PVQ execution.
 type GasLimit = Option<i64>;
 
+/// The PVQ executor.
 pub struct PvqExecutor<Ctx: PvqExecutorContext> {
     engine: Engine,
     linker: Linker<Ctx::UserData, Ctx::UserError>,
@@ -14,6 +17,12 @@ pub struct PvqExecutor<Ctx: PvqExecutorContext> {
 }
 
 impl<Ctx: PvqExecutorContext> PvqExecutor<Ctx> {
+    /// Creates a new PVQ executor.
+    ///
+    /// # Arguments
+    ///
+    /// * `config`: The PolkaVM configuration.
+    /// * `context`: The PVQ executor context.
     pub fn new(config: Config, mut context: Ctx) -> Self {
         let engine = Engine::new(&config).unwrap();
         let mut linker = Linker::<Ctx::UserData, Ctx::UserError>::new();
@@ -26,6 +35,17 @@ impl<Ctx: PvqExecutorContext> PvqExecutor<Ctx> {
         }
     }
 
+    /// Executes a PVQ program.
+    ///
+    /// # Arguments
+    ///
+    /// * `program`: The PVQ program to execute.
+    /// * `args`: The arguments to pass to the program.
+    /// * `gas_limit`: The gas limit for the execution.
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing the result of the execution and the remaining gas.
     pub fn execute(
         &mut self,
         program: &[u8],
