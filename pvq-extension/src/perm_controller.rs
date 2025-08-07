@@ -1,41 +1,42 @@
+//! This module defines the permission controller for extensions.
 use crate::ExtensionIdTy;
 
-/// Source of an extension invocation
+/// The source of an extension invocation.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum InvokeSource {
-    /// Invoked from a runtime API
+    /// The invocation is from a runtime API.
     RuntimeAPI,
 
-    /// Invoked from XCM (Cross-Consensus Message)
+    /// The invocation is from an XCM (Cross-Consensus Message).
     XCM,
 
-    /// Invoked from an extrinsic
+    /// The invocation is from an extrinsic.
     Extrinsic,
 
-    /// Invoked from the runtime inside
+    /// The invocation is from the runtime itself.
     Runtime,
 }
 
-/// Controller for extension permissions
+/// A controller for extension permissions.
 ///
 /// This trait is used to control access to extensions based on the extension ID,
 /// call data, and invocation source.
 pub trait PermissionController {
-    /// Check if a call to an extension is allowed
+    /// Checks if a call to an extension is allowed.
     ///
     /// # Arguments
     ///
-    /// * `extension_id` - The ID of the extension
-    /// * `call` - The encoded call data
-    /// * `source` - The source of the invocation
+    /// * `extension_id`: The identifier of the extension.
+    /// * `call`: The encoded call data.
+    /// * `source`: The source of the invocation.
     ///
     /// # Returns
     ///
-    /// `true` if the call is allowed, `false` otherwise
+    /// `true` if the call is allowed, `false` otherwise.
     fn is_allowed(extension_id: ExtensionIdTy, call: &[u8], source: InvokeSource) -> bool;
 }
 
-/// Default permission controller that allows everything
+/// A default permission controller that allows all calls.
 impl PermissionController for () {
     fn is_allowed(_extension_id: ExtensionIdTy, _call: &[u8], _source: InvokeSource) -> bool {
         true

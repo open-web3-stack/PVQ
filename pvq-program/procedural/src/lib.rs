@@ -1,4 +1,7 @@
-/// Declare the calls used in PVQ program
+//! This crate provides the `program` procedural macro for creating PVQ programs.
+///
+/// # Usage
+///
 /// ```ignore
 /// #[program]
 /// mod query_fungibles {
@@ -20,10 +23,10 @@
 ///     }
 /// }
 /// ```
-///
 mod program;
 use proc_macro::TokenStream;
 
+/// A procedural macro for creating PVQ programs.
 #[proc_macro_attribute]
 pub fn program(attr: TokenStream, item: TokenStream) -> TokenStream {
     program::program(attr, item)

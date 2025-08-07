@@ -1,19 +1,20 @@
+//! This module defines the `CallDataTuple` trait, which is used to dispatch calls to extensions.
 use crate::{CallData, ExtensionError, ExtensionIdTy};
 use fortuples::fortuples;
 use scale_info::prelude::vec::Vec;
 
-/// Trait for a tuple of extension call data types
+/// A trait for a tuple of extension call data types.
 pub trait CallDataTuple {
-    /// Dispatch a call to an extension
+    /// Dispatches a call to an extension.
     ///
     /// # Arguments
     ///
-    /// * `extension_id` - The ID of the extension to call
-    /// * `data` - The encoded call data
+    /// * `extension_id`: The identifier of the extension to call.
+    /// * `data`: The encoded call data.
     ///
     /// # Returns
     ///
-    /// The encoded response data or an error
+    /// The encoded response data or an error.
     fn dispatch(extension_id: ExtensionIdTy, data: &[u8]) -> Result<Vec<u8>, ExtensionError>;
 }
 

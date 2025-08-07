@@ -1,3 +1,4 @@
+//! This crate provides a test runner for PVQ programs.
 use parity_scale_codec::Encode;
 use pvq_extension::{extensions_impl, ExtensionsExecutor, InvokeSource};
 use sp_core::crypto::{AccountId32, Ss58Codec};
@@ -5,22 +6,27 @@ use sp_core::hexdisplay::HexDisplay;
 use xcm::v5::Junction::{GeneralIndex, PalletInstance};
 use xcm::v5::Location;
 
+/// The functions of the fungibles extension.
 #[derive(Encode)]
 #[allow(non_camel_case_types)]
 #[allow(dead_code)]
 pub enum ExtensionFungiblesFunctions {
+    /// The `total_supply` function.
     #[codec(index = 0)]
     total_supply { asset: u32 },
+    /// The `balance` function.
     #[codec(index = 1)]
     balance { asset: u32, who: [u8; 32] },
 }
 
+/// The extensions implementation for the test runner.
 #[extensions_impl]
 pub mod extensions {
     use std::collections::BTreeMap;
 
     use parity_scale_codec::Decode;
 
+    /// The extensions implementation struct.
     #[extensions_impl::impl_struct]
     pub struct ExtensionsImpl;
 
@@ -102,17 +108,20 @@ pub mod extensions {
     }
 }
 
+/// The test runner for PVQ programs.
 pub struct TestRunner {
     executor: ExtensionsExecutor<extensions::Extensions, ()>,
 }
 
 impl TestRunner {
+    /// Creates a new test runner.
     pub fn new() -> Self {
         Self {
             executor: ExtensionsExecutor::new(InvokeSource::RuntimeAPI),
         }
     }
 
+    /// Prepares the input data for a test.
     pub fn prepare_input_data(program_path: &str, chain: &str) -> Vec<u8> {
         let mut input_data = Vec::new();
 
@@ -146,6 +155,7 @@ impl TestRunner {
         input_data
     }
 
+    /// Returns the expected result of a test.
     pub fn expected_result(program_path: &str, chain: &str, entrypoint_idx: u8) -> Vec<u8> {
         // TODO: add more entrypoints
         if program_path.contains("sum-balance") && chain == "poc" && entrypoint_idx == 0 {
@@ -159,6 +169,7 @@ impl TestRunner {
         Vec::new()
     }
 
+    /// Executes a PVQ program.
     pub fn execute_program(&mut self, program_blob: &[u8], input_data: &[u8]) -> pvq_primitives::PvqResult {
         let (result, _) = self.executor.execute(program_blob, input_data, None);
         result

@@ -1,20 +1,23 @@
 use pvq_primitives::PvqError;
+/// The error type for the PVQ executor.
 #[derive(Debug, thiserror::Error)]
 pub enum PvqExecutorError<UserError> {
+    /// The program format is invalid.
     #[error("Invalid PVQ program format")]
     InvalidProgramFormat,
+    /// A memory access error occurred.
     #[error("Memory access error: {0}")]
     MemoryAccessError(polkavm::MemoryAccessError),
-    // Extract from the PVM CallError
+    /// A trap occurred during execution.
     #[error("Trap")]
     Trap,
-    // Extract from the PVM CallError
+    /// Not enough gas to execute the program.
     #[error("Not enough gas")]
     NotEnoughGas,
-    // Usually a custom error type from the extension system definition
+    /// A user-defined error occurred.
     #[error("User error: {0}")]
     User(UserError),
-    // Other errors directly from the PVM
+    /// An other error from the PolkaVM occurred.
     #[error("Other PVM error: {0}")]
     OtherPvmError(polkavm::Error),
 }

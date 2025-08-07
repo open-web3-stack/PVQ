@@ -1,3 +1,4 @@
+//! This crate provides a tool for generating metadata for PVQ programs.
 pub type ExtensionId = u64;
 pub type FnIndex = u8;
 mod features;
