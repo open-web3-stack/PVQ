@@ -1,8 +1,10 @@
+//! This module defines the metadata structures for extensions.
 use crate::ExtensionIdTy;
 use scale_info::prelude::string::{String, ToString};
 
-// This trait is for ExtensionImpl
+/// A trait for retrieving extension implementation metadata.
 pub trait ExtensionImplMetadata {
+    /// Returns the metadata for a given extension.
     fn extension_metadata(extension_id: ExtensionIdTy) -> ExtensionMetadata;
 }
 
@@ -14,15 +16,17 @@ use scale_info::{
     IntoPortable, PortableRegistry, Registry,
 };
 use serde::Serialize;
-/// Metadata of extensions
+/// The metadata of all extensions.
 #[derive(Clone, PartialEq, Eq, Encode, Debug, Serialize)]
 pub struct Metadata {
+    /// The portable type registry.
     pub types: PortableRegistry,
-    // Use String to prevent loss of precision in frontend codes
+    /// A map of extension identifiers to their metadata.
     pub extensions: BTreeMap<String, ExtensionMetadata<PortableForm>>,
 }
 
 impl Metadata {
+    /// Creates a new `Metadata` instance.
     pub fn new(extensions: BTreeMap<ExtensionIdTy, ExtensionMetadata>) -> Self {
         let mut registry = Registry::new();
         let extensions = extensions
@@ -36,10 +40,12 @@ impl Metadata {
     }
 }
 
-/// Metadata of an extension.
+/// The metadata of an extension.
 #[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct ExtensionMetadata<T: Form = MetaForm> {
+    /// The name of the extension.
     pub name: T::String,
+    /// The functions of the extension.
     pub functions: Vec<FunctionMetadata<T>>,
 }
 
@@ -67,14 +73,14 @@ impl Serialize for ExtensionMetadata<PortableForm> {
     }
 }
 
-/// Metadata of a runtime function.
+/// The metadata of a runtime function.
 #[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct FunctionMetadata<T: Form = MetaForm> {
-    /// Method name.
+    /// The name of the function.
     pub name: T::String,
-    /// Method parameters.
+    /// The parameters of the function.
     pub inputs: Vec<FunctionParamMetadata<T>>,
-    /// Method output.
+    /// The output of the function.
     pub output: T::Type,
 }
 
@@ -104,12 +110,12 @@ impl Serialize for FunctionMetadata<PortableForm> {
     }
 }
 
-/// Metadata of a runtime method parameter.
+/// The metadata of a runtime function parameter.
 #[derive(Clone, PartialEq, Eq, Encode, Debug)]
 pub struct FunctionParamMetadata<T: Form = MetaForm> {
-    /// Parameter name.
+    /// The name of the parameter.
     pub name: T::String,
-    /// Parameter type.
+    /// The type of the parameter.
     pub ty: T::Type,
 }
 
