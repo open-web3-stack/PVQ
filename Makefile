@@ -12,9 +12,11 @@ guests: $(GUEST_TARGETS)
 .PHONY: dummy-guests
 dummy-guests: $(DUMMY_GUEST_TARGETS)
 
+# Build a specific guest example. Optional FEATURES variable can be used to enable cargo features.
+# Usage: make guest-swap-info FEATURES="asset-hub"
 guest-%:
 	mkdir -p output
-	cd guest-examples; METADATA_OUTPUT_DIR=$(shell pwd)/output cargo build --release --bin $* -p $*
+	cd guest-examples; METADATA_OUTPUT_DIR=$(shell pwd)/output cargo build --release --bin $* -p $* $(if $(FEATURES),--features $(FEATURES))
 	polkatool link --run-only-if-newer -s guest-examples/target/riscv32emac-unknown-none-polkavm/release/$* -o output/$*.polkavm
 
 dummy-guest-%:

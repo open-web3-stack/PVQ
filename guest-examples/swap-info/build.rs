@@ -4,10 +4,12 @@ use std::process::Command;
 
 fn main() {
     // Tell Cargo to rerun this build script if the source file changes
-    // println!("cargo:rerun-if-changed=src/main.rs");
+    println!("cargo:rerun-if-changed=src/main.rs");
     let current_dir = env::current_dir().expect("Failed to get current directory");
     // Determine the output directory for the metadata
-    let output_dir = PathBuf::from(env::var("METADATA_OUTPUT_DIR").expect("METADATA_OUTPUT_DIR is not set"));
+    let output_dir = PathBuf::from(env::var("METADATA_OUTPUT_DIR").expect("METADATA_OUTPUT_DIR is not set"))
+        .canonicalize()
+        .expect("Failed to canonicalize output directory");
 
     // Build and run the command
     let status = Command::new("pvq-program-metadata-gen")
@@ -15,7 +17,11 @@ fn main() {
         .arg(&current_dir)
         .arg("--output-dir")
         .arg(&output_dir)
+        .arg("--target")
+        .arg("aarch64-apple-darwin")
         .env("RUST_LOG", "info")
+        .stdout(std::process::Stdio::inherit())
+        .stderr(std::process::Stdio::inherit())
         .status()
         .expect("Failed to execute pvq-program-metadata-gen");
 
