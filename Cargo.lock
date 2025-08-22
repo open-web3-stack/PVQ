@@ -2967,7 +2967,7 @@ dependencies = [
 
 [[package]]
 name = "pvq-program-metadata-gen"
-version = "0.2.0"
+version = "0.5.0"
 dependencies = [
  "clap",
  "parity-scale-codec",

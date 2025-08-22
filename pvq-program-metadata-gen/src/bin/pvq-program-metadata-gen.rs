@@ -13,6 +13,13 @@ struct Args {
 
     #[arg(short, long)]
     output_dir: PathBuf,
+
+    #[arg(short, long)]
+    manifest_path: Option<PathBuf>,
+
+    /// Target triple to build for (optional)
+    #[arg(long)]
+    target: Option<String>,
 }
 
 fn main() {
@@ -25,6 +32,11 @@ fn main() {
     // Logging arguments
     info!("Generating metadata for program at: {}", args.crate_path.display());
     info!("Output dir: {}", args.output_dir.display());
+    if let Some(ref manifest_path) = args.manifest_path {
+        info!("Manifest path: {}", manifest_path.display());
+    } else {
+        info!("Using default manifest (no manifest path provided)");
+    }
 
     // Create a temp crate for the metadata generation
     let temp_dir = tempfile::tempdir().expect("Failed to create temp directory");
@@ -32,17 +44,29 @@ fn main() {
     fs::create_dir_all(temp_crate_path).expect("Failed to create `temp_crate` directory");
     info!("Temp crate path: {}", temp_crate_path.display());
 
-    // Extract features section from the original manifest
-    let original_manifest_content =
-        std::fs::read_to_string(args.crate_path.join("Cargo.toml")).expect("Failed to read original Cargo.toml");
-    let optional_features = pvq_program_metadata_gen::extract_features(&original_manifest_content)
-        .expect("Failed to extract features section from the original Cargo.toml");
-    debug!("Features section: {:?}", optional_features);
+    // Read or create the manifest content
+    let (manifest_content, optional_features) = if let Some(ref manifest_path) = args.manifest_path {
+        // Read the manifest from the provided manifest path
+        let content = std::fs::read_to_string(manifest_path)
+            .unwrap_or_else(|_| panic!("Failed to read manifest file: {}", manifest_path.display()));
+        debug!("Manifest content: {}", content);
 
-    // Create Cargo.toml with features from the original crate
-    let manifest = pvq_program_metadata_gen::create_manifest(optional_features.as_ref());
-    debug!("Manifest: {}", manifest);
-    std::fs::write(temp_crate_path.join("Cargo.toml"), manifest).expect("Failed to write Cargo.toml");
+        // Extract features section from the manifest for active features determination
+        let features = pvq_program_metadata_gen::extract_features(&content)
+            .expect("Failed to extract features section from the manifest");
+        debug!("Features section: {:?}", features);
+
+        (content, features)
+    } else {
+        // Use the default manifest from create_manifest
+        let content = pvq_program_metadata_gen::create_manifest(None);
+        debug!("Generated default manifest content: {}", content);
+        (content, None)
+    };
+
+    // Copy the manifest to temp directory
+    std::fs::write(temp_crate_path.join("Cargo.toml"), &manifest_content)
+        .expect("Failed to write Cargo.toml to temp directory");
 
     // Add active features to the cargo command
     let active_features = pvq_program_metadata_gen::get_active_features(optional_features.as_ref())
@@ -66,11 +90,20 @@ fn main() {
     fs::write(temp_crate_path.join("src/main.rs"), metadata_gen_src.to_string())
         .expect("Failed to write metadata generator source code");
 
-    // Compile and run the metadata generator in one step
     let mut cargo_cmd = Command::new("cargo");
     cargo_cmd.current_dir(temp_crate_path).args(["run"]);
-    for feature in active_features {
-        cargo_cmd.arg("--features").arg(feature);
+
+    // Add target if specified
+    if let Some(ref target) = args.target {
+        info!("Using explicit target: {}", target);
+        cargo_cmd.arg("--target").arg(target);
+    }
+
+    if !active_features.is_empty() {
+        cargo_cmd.arg("--features");
+        for feature in active_features {
+            cargo_cmd.arg(feature);
+        }
     }
     info!("Compiling and running metadata generator...");
     let status = cargo_cmd.status().expect("Failed to run metadata generator");

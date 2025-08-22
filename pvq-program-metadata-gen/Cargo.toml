@@ -1,7 +1,7 @@
 [package]
 name = "pvq-program-metadata-gen"
 description = "PVQ program metadata generation"
-version = "0.2.0"
+version = "0.5.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
