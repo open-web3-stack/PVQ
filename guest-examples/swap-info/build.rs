@@ -17,8 +17,6 @@ fn main() {
         .arg(&current_dir)
         .arg("--output-dir")
         .arg(&output_dir)
-        .arg("--target")
-        .arg("aarch64-apple-darwin")
         .env("RUST_LOG", "info")
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())

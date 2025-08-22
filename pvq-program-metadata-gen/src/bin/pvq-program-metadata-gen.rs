@@ -48,7 +48,7 @@ fn main() {
     let (manifest_content, optional_features) = if let Some(ref manifest_path) = args.manifest_path {
         // Read the manifest from the provided manifest path
         let content = std::fs::read_to_string(manifest_path)
-            .expect(&format!("Failed to read manifest file: {}", manifest_path.display()));
+            .unwrap_or_else(|_| panic!("Failed to read manifest file: {}", manifest_path.display()));
         debug!("Manifest content: {}", content);
 
         // Extract features section from the manifest for active features determination
